@@ -52,5 +52,5 @@
     </bean>
 
     <!-- 自动扫描与装配dao -->
-    <context:component-scan base-package="com.crayon,com.crayon.dao.user_manage"/>
+    <context:component-scan base-package="com.crayon,com.crayon.dao.user_manage,com.crayon.service"/>
 </beans>

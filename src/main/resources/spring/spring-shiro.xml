@@ -19,7 +19,7 @@
 		也需要从Realm得到用户相应的角色/权限进行验证用户是否能进行操作；
 		可以把Realm看成DataSource ， 即安全数据源
 	-->
-    <bean id="shiroDbRealm" class="cn.com.sm.realm.UserRealm">
+    <bean id="shiroDbRealm" class="com.crayon.shiro.realm.UserRealm">
         <!-- 使用credentialsMatcher实现密码验证服务 -->
         <property name="credentialsMatcher" ref="credentialsMatcher"/>
         <!-- 是否启用缓存 -->
@@ -77,7 +77,7 @@
 
 
     <!-- 凭证匹配器 -->
-    <bean id="credentialsMatcher" class="cn.com.sm.credentials.RetryLimitHashedCredentialsMatcher">
+    <bean id="credentialsMatcher" class="com.crayon.shiro.credentials.RetryLimitHashedCredentialsMatcher">
         <!-- 使用Spring构造器注入cacheManager -->
         <constructor-arg ref="cacheManager"/>
         <!-- 指定散列算法名称 -->
@@ -111,16 +111,16 @@
         <property name="rememberMeParam" value="rememberMe"/>
     </bean>
 
-    <bean id="MyPermissionFilter" class="cn.com.sm.shiro.MyPermissionFilter"/>
+    <bean id="MyPermissionFilter" class="com.crayon.shiro.MyPermissionFilter"/>
 
     <!-- Shiro Filter id值和web.xml文件配置的过滤器名称相同 -->
     <bean id="shiroFilter"
-          class="cn.com.sm.shiro.MyShiroFilterFactoryBean">
+          class="com.crayon.shiro.MyShiroFilterFactoryBean">
         <property name="securityManager" ref="securityManager" />
         <!-- 登录页面 -->
-        <property name="loginUrl" value="/login.html" />
-        <property name="unauthorizedUrl" value="/login.html"/>
-        <property name="successUrl" value="/index.html"/>
+        <property name="loginUrl" value="/index.jsp" />
+        <property name="unauthorizedUrl" value="/404.html"/>
+        <property name="successUrl" value="/index.jsp"/>
         <property name="filters">
             <util:map>
                 <!--
