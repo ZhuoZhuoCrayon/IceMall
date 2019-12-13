@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:context="http://www.springframework.org/schema/context"
        xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="
-		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
-		http://www.springframework.org/schema/context  http://www.springframework.org/schema/context/spring-context-4.1.xsd
-		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.1.xsd"
-       default-lazy-init="true">
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
     <!--配置 CacheManager. 2.1需要加入 ehcache 的 jar 包及配置文件. -->
     <bean id="cacheManager" class="org.apache.shiro.cache.MemoryConstrainedCacheManager"> </bean>
@@ -106,7 +103,7 @@
         <!-- 这两个字段，username和password要和表单中定义的username和password字段名称相同，可以更改，但是表单和XML要对应 -->
         <property name="usernameParam" value="username"/>
         <property name="passwordParam" value="password"/>
-        <property name="loginUrl" value="/login.html"/>
+        <property name="loginUrl" value="/API/SystemAPI.html"/>
         <!-- rememberMeParam是rememberMe请求参数名，请求参数是boolean类型，true表示记住我 -->
         <property name="rememberMeParam" value="rememberMe"/>
     </bean>
@@ -123,9 +120,7 @@
         <property name="successUrl" value="/index.jsp"/>
         <property name="filters">
             <util:map>
-                <!--
                 <entry key="authc" value-ref="formAuthenticationFilter"/>
-                -->
                 <entry key="perms" value-ref="MyPermissionFilter"/>
                 <entry key="roles" value-ref="MyPermissionFilter"/>
             </util:map>
