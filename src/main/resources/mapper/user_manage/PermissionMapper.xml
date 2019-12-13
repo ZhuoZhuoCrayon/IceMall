@@ -4,15 +4,14 @@
 
 <mapper namespace="com.crayon.dao.user_manage.PermissionDao">
 
-    <!-- 根据权限id查询-->
+    <select id="findAll" resultType="com.crayon.pojo.user_manage.Permission">
+        select * from permissions;
+    </select>
+
     <select id="findById" parameterType="Integer"
             resultType="com.crayon.pojo.user_manage.Permission">
         SELECT * FROM permissions p
         where p.id = #{id}
-    </select>
-
-    <select id="findAll" resultType="com.crayon.pojo.user_manage.Permission">
-        select * from permissions;
     </select>
 
     <insert id="insert" parameterType="com.crayon.pojo.user_manage.Permission">

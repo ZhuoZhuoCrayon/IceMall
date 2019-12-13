@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.crayon.dao.user_manage.CustomerDao">
+
+    <!-- 根据身份id查询-->
+    <select id="findById" parameterType="Integer"
+            resultType="com.crayon.pojo.user_manage.Customer">
+        SELECT * FROM customer
+        where userId = #{userId};
+    </select>
+
+    <select id="findAll" resultType="com.crayon.pojo.user_manage.Customer">
+        select * from customer;
+    </select>
+
+    <insert id="insert" parameterType="com.crayon.pojo.user_manage.Customer">
+        insert into customer
+        value (#{userId},#{cusStatus},#{cusLevelId});
+    </insert>
+
+    <update id="update" parameterType="com.crayon.pojo.user_manage.Customer">
+        update customer
+        <set>
+            <if test="cusStatus!=null">
+                cusStatus = #{cusStatus},
+            </if>
+            <if test="cusLevelId!=null">
+                cusLevelId = #{cusLevelId},
+            </if>
+        </set>
+        where userId = #{userId};
+    </update>
+
+    <delete id="delete" parameterType="Integer">
+        delete from customer
+        where userId = #{userId};
+    </delete>
+</mapper>

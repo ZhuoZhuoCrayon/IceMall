@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.crayon.dao.CusLevelDao">
+
+    <!-- 根据cusLevelId查询-->
+    <select id="findById" parameterType="Integer"
+            resultType="com.crayon.pojo.CusLevel">
+        SELECT * FROM cuslevel
+        where cusLevelId = #{cusLevelId};
+    </select>
+
+    <select id="findAll" resultType="com.crayon.pojo.CusLevel">
+        select * from cuslevel;
+    </select>
+
+    <insert id="insert" parameterType="com.crayon.pojo.CusLevel"
+            useGeneratedKeys="true" keyProperty="cusLevelId">
+        insert into cuslevel
+        value (#{cusLevelId},#{levelName},#{levelDiscount});
+    </insert>
+
+    <update id="update" parameterType="com.crayon.pojo.CusLevel">
+        update cuslevel
+        <set>
+            <if test="levelName!=null">
+                levelName = #{levelName},
+            </if>
+            <if test="levelDiscount!=null">
+                levelDiscount = #{levelDiscount},
+            </if>
+        </set>
+        where cusLevelId = #{cusLevelId};
+    </update>
+
+    <delete id="delete" parameterType="Integer">
+        delete from cuslevel
+        where cusLevelId = #{cusLevelId};
+    </delete>
+</mapper>

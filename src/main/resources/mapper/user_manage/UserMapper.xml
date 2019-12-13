@@ -9,7 +9,7 @@
     <select id="findByName" parameterType="String"
             resultType="com.crayon.pojo.user_manage.User">
         SELECT * FROM users
-        WHERE userName = #{userName}
+        WHERE userName = #{userName};
     </select>
 
     <!-- 根据ID查询用户 -->
@@ -43,25 +43,31 @@
         where u.userName = #{userName};
     </select>
     <!-- 创建用户 -->
-    <insert id="insert" parameterType="com.crayon.pojo.user_manage.User">
-        INSERT INTO users
+    <insert id="insert" parameterType="com.crayon.pojo.user_manage.User"
+            useGeneratedKeys="true" keyProperty="userId">
+        INSERT INTO users(userName, password, salt, email, phoneNumber, registerDate, birthday)
         VALUES
-        (#{userId},#{userName},#{password},#{salt},
-        #{email},#{phoneNumber},#{registerDate},#{birthday})
+        (#{userName},#{password},#{salt},
+        #{email},#{phoneNumber},#{registerDate},#{birthday});
+    </insert>
+
+    <insert id="linkRole">
+        insert into users_roles
+        values (null,#{userId},(select id from roles where role=#{roleName}))
     </insert>
 
     <!-- 移除用户 -->
     <delete id="delete" parameterType="Integer">
         DELETE FROM users
-        WHERE id = #{id}
+        WHERE userId = #{userId};
     </delete>
 
     <!-- 更新用户信息 -->
     <update id="update" parameterType="com.crayon.pojo.user_manage.User">
         UPDATE users
         <set>
-            <if test="username != null">
-                username = #{username},
+            <if test="userName != null">
+                userName = #{userName},
             </if>
             <if test="password != null">
                 password = #{password},
@@ -70,20 +76,19 @@
                 salt = #{salt},
             </if>
             <if test="email != null">
-                username = #{username},
+                email = #{email},
             </if>
             <if test="phoneNumber != null">
-                password = #{password},
+                phoneNumber = #{phoneNumber},
             </if>
             <if test="registerDate != null">
-                salt = #{salt},
+                registerDate = #{registerDate},
             </if>
             <if test="birthday != null">
                 birthday = #{birthday},
             </if>
         </set>
-        WHERE
-        id = #{userId}
+        WHERE userId = #{userId};
     </update>
 
 </mapper>

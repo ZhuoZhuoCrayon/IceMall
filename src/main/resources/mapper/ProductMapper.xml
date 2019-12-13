@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.crayon.dao.ProductDao">
+
+    <select id="findAll" resultType="com.crayon.pojo.Product">
+        select * from product;
+    </select>
+
+    <!-- 根据proId查询-->
+    <select id="findById" parameterType="Integer" resultType="com.crayon.pojo.Product">
+        SELECT * FROM product pro
+        where pro.proId = #{proId};
+    </select>
+
+    <!-- 根据proName查询-->
+    <select id="finByName" parameterType="String"
+            resultType="com.crayon.pojo.Product">
+        SELECT * FROM product pro
+        where pro.proName = #{proName};
+    </select>
+
+    <!-- 根据productionBatch查询-->
+    <select id="finByProductionBatch" parameterType="String" resultType="com.crayon.pojo.Product">
+        SELECT * FROM product pro
+        where pro.productionBatch = #{productionBatch};
+    </select>
+
+    <!-- 根据主码查询-->
+    <select id="findByKey" resultType="com.crayon.pojo.Product">
+        SELECT * FROM product pro
+        where pro.proId = #{proId} and pro.productionBatch = #{productionBatch};
+    </select>
+
+    <insert id="insert" parameterType="com.crayon.pojo.Product">
+        insert into product
+        value (#{proId},#{productionBatch},#{proName},#{proPrice},#{proQuantity},#{proCreationTime},
+                #{productionTime},#{preservePeriod},#{proPortionalTaxRate},#{preferentialConditionId},
+                #{proStatus});
+    </insert>
+
+    <update id="update" parameterType="com.crayon.pojo.Product">
+        update product
+        <set>
+            <if test="proName!=null">
+                proName = #{proName},
+            </if>
+            <if test="proPrice!=null">
+                proPrice = #{proPrice},
+            </if>
+            <if test="proQuantity!=null">
+                proQuantity = #{proQuantity},
+            </if>
+            <if test="proCreationTime!=null">
+                proCreationTime = #{proCreationTime},
+            </if>
+            <if test="productionTime!=null">
+                productionTime = #{productionTime},
+            </if>
+            <if test="preservePeriod!=null">
+                preservePeriod = #{preservePeriod},
+            </if>
+            <if test="proPortionalTaxRate!=null">
+                proPortionalTaxRate = #{proPortionalTaxRate},
+            </if>
+            <if test="preferentialConditionId!=null">
+                preferentialConditionId = #{preferentialConditionId},
+            </if>
+            <if test="proStatus!=null">
+                proStatus = #{proStatus},
+            </if>
+        </set>
+        where proId = #{proId} and productionBatch = #{productionBatch};
+    </update>
+
+    <delete id="deleteById" parameterType="Integer">
+        delete from product
+        where proId = #{proid}
+    </delete>
+
+    <delete id="deleteByKey">
+        delete from product
+        where proId = #{proId} and productionBatch = #{productionBatch};
+    </delete>
+</mapper>

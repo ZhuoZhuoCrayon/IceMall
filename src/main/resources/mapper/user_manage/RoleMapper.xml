@@ -5,8 +5,7 @@
 <mapper namespace="com.crayon.dao.user_manage.RoleDao">
 
     <!-- 根据权限id查询-->
-    <select id="findById" parameterType="Integer"
-            resultType="com.crayon.pojo.user_manage.Role">
+    <select id="findById" parameterType="Integer" resultType="com.crayon.pojo.user_manage.Role">
         SELECT * FROM roles r
         where r.id = #{id};
     </select>
