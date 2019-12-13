@@ -1,5 +1,7 @@
 package com.crayon.pojo.user_manage;
 
+import com.crayon.dto.UserRegisterBean;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -32,6 +34,23 @@ public class User implements Serializable {
         this.email = email;
         this.registerDate = registerDate;
         this.birthday = birthday;
+    }
+
+    /**
+     * 将dto类转为User类，用于获取注册信息
+     * @param uRb
+     */
+    public User(UserRegisterBean uRb){
+
+        this.setUserName(uRb.getUserName());
+        this.setPassword(uRb.getPassword());
+        this.setEmail(uRb.getEmail());
+        this.setPhoneNumber(uRb.getPhoneNumber());
+        this.setBirthday(uRb.getBirthday());
+
+        //auto create time
+        this.setRegisterDate(new Date());
+
     }
 
     public void setUserId(Integer userId) {
