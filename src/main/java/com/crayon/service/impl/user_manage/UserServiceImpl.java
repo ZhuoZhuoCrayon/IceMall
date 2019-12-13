@@ -1,12 +1,17 @@
 package com.crayon.service.impl.user_manage;
 
+import com.crayon.dao.CusLevelDao;
+import com.crayon.dao.user_manage.CustomerDao;
 import com.crayon.dao.user_manage.UserDao;
 import com.crayon.dto.Result;
+import com.crayon.dto.UserRegisterBean;
+import com.crayon.pojo.user_manage.Customer;
 import com.crayon.pojo.user_manage.User;
 import com.crayon.service.Helper.PasswordHelper;
 import com.crayon.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -14,10 +19,13 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+@Component
 @Service
 public class UserServiceImpl implements UserService {
     @Autowired
     private UserDao userDao;
+    @Autowired
+    private CustomerDao customerDao;
     @Autowired
     private PasswordHelper passwordHelper;
 
@@ -54,7 +62,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public Result insert(User user) {
         try{
-            if(userDao.findById(user.getUserId()).size()==0){
+            if(userDao.findById(user.getUserId()).size()!=0){
                 return new Result(false,"用户已存在");
             }else{
                 passwordHelper.encryptPassword(user);
@@ -131,6 +139,40 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Result changePassword(Integer id, String newPassword) {
-        return null;
+        try {
+            User user = userDao.findById(id).get(0);
+            user.setPassword(newPassword);
+            passwordHelper.encryptPassword(user);
+            userDao.update(user);
+            return new Result(true,"修改密码成功");
+        }catch (Exception e){
+            e.printStackTrace();
+            return new Result(false,"Error");
+        }
+    }
+
+    @Override
+    public Result registerForCustomer(UserRegisterBean userRegisterBean) {
+        try{
+            User user = new User(userRegisterBean);
+            if(userDao.findById(user.getUserId()).size()!=0){
+                return new Result(false,"用户已存在");
+            }else{
+                passwordHelper.encryptPassword(user);
+
+                //插入并且获取自增id
+                userDao.insert(user);
+                int userId = user.getUserId();
+                //关联角色：普通客户
+                userDao.linkRole(userId,"customer");
+
+                //创建customer,用户等级初始为1-non
+                customerDao.insert(new Customer(userId,null,1));
+                return new Result(true,"注册成功");
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            return new Result(false,"Error");
+        }
     }
 }

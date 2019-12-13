@@ -6,15 +6,18 @@ import com.crayon.pojo.user_manage.Permission;
 import com.crayon.service.BaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 @Service
 public class PermissionServiceImpl implements BaseService<Permission> {
     @Autowired
     private PermissionDao permissionDao;
+
 
     @Override
     public List<Permission> findAll() {

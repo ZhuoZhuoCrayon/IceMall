@@ -29,6 +29,7 @@ public interface BaseService<T> {
      * 插入数据
      * @param t
      */
+
     Result insert(T t);
 
     /**
