@@ -124,11 +124,11 @@ INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (28,41);
 INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (29,42);
 INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (30,41);
 
-
-INSERT INTO `preferentialconditions`(`preConId`, `preCondition`, `preDiscount`) VALUES (1,'满399',0.95);
-INSERT INTO `preferentialconditions`(`preConId`, `preCondition`, `preDiscount`) VALUES (2,'满599',0.9);
-INSERT INTO `preferentialconditions`(`preConId`, `preCondition`, `preDiscount`) VALUES (3,'满699',0.85);
-INSERT INTO `preferentialconditions`(`preConId`, `preCondition`, `preDiscount`) VALUES (4,'满999',0.8);
+# 1满减 2优惠折扣 3 满额折扣
+INSERT INTO preferentialconditions VALUES (1,1,'满100减10',null,100,10);
+INSERT INTO preferentialconditions VALUES (2,1,'满1000减500',null,1000,500);
+INSERT INTO preferentialconditions VALUES (3,2,'8折',0.8,null,null);
+INSERT INTO preferentialconditions VALUES (4,3,'满1000打8折',0.8,1000,null);
 
 
 
@@ -174,24 +174,24 @@ INSERT INTO `cuslevel`(`cusLevelId`, `levelName`, `levelDiscount`) VALUES (3,'SV
 
 
 
-INSERT INTO `cusfavorite`(`cusFavId`, `proId`) VALUES (1,1);
-INSERT INTO `cusfavorite`(`cusFavId`, `proId`) VALUES (1,2);
-INSERT INTO `cusfavorite`(`cusFavId`, `proId`) VALUES (1,3);
-INSERT INTO `cusfavorite`(`cusFavId`, `proId`) VALUES (2,1);
-INSERT INTO `cusfavorite`(`cusFavId`, `proId`) VALUES (2,3);
-INSERT INTO `cusfavorite`(`cusFavId`, `proId`) VALUES (2,5);
-INSERT INTO `cusfavorite`(`cusFavId`, `proId`) VALUES (2,11);
-INSERT INTO `cusfavorite`(`cusFavId`, `proId`) VALUES (3,11);
-INSERT INTO `cusfavorite`(`cusFavId`, `proId`) VALUES (3,15);
-INSERT INTO `cusfavorite`(`cusFavId`, `proId`) VALUES (3,17);
-INSERT INTO `cusfavorite`(`cusFavId`, `proId`) VALUES (3,19);
-INSERT INTO `cusfavorite`(`cusFavId`, `proId`) VALUES (4,2);
-INSERT INTO `cusfavorite`(`cusFavId`, `proId`) VALUES (4,15);
-INSERT INTO `cusfavorite`(`cusFavId`, `proId`) VALUES (5,13);
-INSERT INTO `cusfavorite`(`cusFavId`, `proId`) VALUES (5,14);
-INSERT INTO `cusfavorite`(`cusFavId`, `proId`) VALUES (5,22);
-INSERT INTO `cusfavorite`(`cusFavId`, `proId`) VALUES (6,11);
-INSERT INTO `cusfavorite`(`cusFavId`, `proId`) VALUES (6,15);
+INSERT INTO cusfavorite VALUES (1,1);
+INSERT INTO cusfavorite VALUES (1,2);
+INSERT INTO cusfavorite VALUES (1,3);
+INSERT INTO cusfavorite VALUES (2,1);
+INSERT INTO cusfavorite VALUES (2,3);
+INSERT INTO cusfavorite VALUES (2,5);
+INSERT INTO cusfavorite VALUES (2,11);
+INSERT INTO cusfavorite VALUES (3,11);
+INSERT INTO cusfavorite VALUES (3,15);
+INSERT INTO cusfavorite VALUES (3,17);
+INSERT INTO cusfavorite VALUES (3,19);
+INSERT INTO cusfavorite VALUES (4,2);
+INSERT INTO cusfavorite VALUES (4,15);
+INSERT INTO cusfavorite VALUES (5,13);
+INSERT INTO cusfavorite VALUES (5,14);
+INSERT INTO cusfavorite VALUES (5,22);
+INSERT INTO cusfavorite VALUES (6,11);
+INSERT INTO cusfavorite VALUES (6,15);
 
 
 
