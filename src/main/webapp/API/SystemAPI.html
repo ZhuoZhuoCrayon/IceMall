@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SystemAPI</title>
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+</head>
+<body>
+<div id="app">
+    <el-button slot="append" @click="testLogin" style="width: 200px;">
+        testLogin
+    </el-button>
+
+    <el-button slot="append" @click="testRegister" style="width: 200px;">
+        testRegister
+    </el-button>
+</div>
+</body>
+
+<!-- 先引入 Vue -->
+<script src="https://unpkg.com/vue/dist/vue.js"></script>
+<!-- 引入组件库 -->
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/jutils-src"></script>
+
+<script>
+    new Vue({
+        el:'#app',
+        data:{
+        },
+        methods: {
+            testLogin(){
+                axios({
+                    method:"post",
+                    url:"/system/login.do",
+                    headers:{
+                        'Content-type': 'application/x-www-form-urlencoded'
+                    },
+                    params:{
+                        username: 'cxx',
+                        password: 'cxx',
+                        remember: false
+                    },
+                }).then((respone)=>{
+                    console.log(respone.data);
+                }).catch(error=>{
+                    console.log(error);
+                    this.$message({
+                        type: 'error',
+                        message: '网络无连接'
+                    })
+                })
+            },
+            testRegister(){
+                return true;
+            }
+        }
+    })
+</script>
+</body>
+</html>
