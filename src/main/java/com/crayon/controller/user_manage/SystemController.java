@@ -1,26 +1,29 @@
 package com.crayon.controller.user_manage;
 
+import com.crayon.dto.CusSimple;
 import com.crayon.dto.Result;
+import com.crayon.dto.UserRegisterBean;
+import com.crayon.service.UserService;
+import com.crayon.service.impl.user_manage.UserServiceImpl;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.SecurityUtils;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-
-import org.springframework.web.bind.annotation.RestController;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/system")
+@Api(value = "系统管理")
 public class SystemController {
-    /**
-     * 用户登录的入口
-     *
-     * @param username
-     * @param password
-     * @return
-     */
-    @RequestMapping(value = "/login",method = RequestMethod.POST)
+
+    @Autowired
+    private UserServiceImpl userServiceImpl;
+
+
+    @RequestMapping(value = "/login.do",method = RequestMethod.POST)
+    @ApiOperation(value = "用户登录",httpMethod = "POST")
     public Result login(
             @RequestParam(value = "username", required = false) String username,
             @RequestParam(value = "password", required = false) String password,
@@ -29,6 +32,7 @@ public class SystemController {
         System.out.println("登陆用户输入的用户名：" + username + "，密码：" + password +
                 ", remember me: " + remember);
         String error = null;
+
         if (username != null && password != null) {
             //初始化
             Subject subject = SecurityUtils.getSubject();
@@ -67,20 +71,32 @@ public class SystemController {
             } catch (ExcessiveAttemptsException e) {
                 //e.printStackTrace();
                 error = "该账号登录失败次数过多，错误信息";
+            }catch (IndexOutOfBoundsException e){
+                error = "用户账户不存在";
             } catch (Exception e) {
                 //e.printStackTrace();
                 error = "未知错误";
             }
         } else {
-            error = "请输入用户名和密码";
+            error = "用户名或密码为空，请正确输入";
         }
         //登录失败
         System.out.println(error);
         return new Result(false, error);
     }
 
-    @RequestMapping(value = "/register",method = RequestMethod.POST)
-    public Result register(){
-        return new Result(false,"");
+    @RequestMapping(value = "register.do",method = RequestMethod.POST)
+    @ApiOperation(value = "客户注册",httpMethod = "POST")
+    public Result register(@RequestBody UserRegisterBean userRegisterBean){
+        return userServiceImpl.registerForCustomer(userRegisterBean);
     }
+
+    @RequestMapping(value = "getCusSimple.do",method = RequestMethod.GET)
+    @ApiOperation(value = "获取当前登录客户的简要展示信息",httpMethod = "GET")
+    public CusSimple getCusSimple(){
+        //获取连接状态用户名
+        String userName = (String) SecurityUtils.getSubject().getPrincipal();
+        return userServiceImpl.getCusSimple(userName);
+    }
+
 }
