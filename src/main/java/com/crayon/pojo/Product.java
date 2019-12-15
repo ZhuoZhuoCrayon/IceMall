@@ -11,7 +11,7 @@ public class Product implements Serializable {
     private Integer proQuantity;
     private Date proCreationTime;   //创建时间
     private Date productionTime;    //生产日期
-    private Date preservePeriod;    //保质期
+    private Date preservePeriod;    //过期时间
     private Float proPortionalTaxRate;  //税额比例
     private Integer preferentialConditionId;    //优惠条件
     private String proStatus;   //产品状态
