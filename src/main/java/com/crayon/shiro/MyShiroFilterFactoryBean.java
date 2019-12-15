@@ -29,12 +29,15 @@ public class MyShiroFilterFactoryBean  extends ShiroFilterFactoryBean {
 
         List<Permission> permissions = permissionService.findAll();
         definitions = "/static/** = anon\n" +
+                "/swagger/** = anon\n" +
                 "/css/** = anon\n" +
                 "/js/** = anon\n" +
                 "/img/** = anon\n" +
                 "/index.jsp = anon\n" +
                 "/404.html = anon\n" +
-                "/test.html = anon\n";
+                "/test.html = anon\n" +
+                "/API/SystemAPI.html = anon\n" +
+                "/product/detail.do = authc\n";
 
         //导入权限
         for(Permission permission:permissions){

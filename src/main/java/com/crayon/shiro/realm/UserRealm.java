@@ -44,7 +44,8 @@ public class UserRealm extends AuthorizingRealm {
      * @throws AuthenticationException
      */
     @Override
-    protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
+    protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token)
+            throws AuthenticationException,IndexOutOfBoundsException{
         System.out.println("身份校验--执行了goGetAuthenticationInfo...");
 
         String username = (String) token.getPrincipal();
