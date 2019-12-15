@@ -32,6 +32,15 @@
         where u.userName = #{userName};
     </select>
 
+    <!-- 根据用户名获取用户角色名中文昵称 -->
+    <select id="getRoleDes" parameterType="String" resultType="String">
+        select r.description
+        from users u
+        join users_roles ur on ur.user_id = u.userId
+        join roles r on ur.role_id = r.id
+        where u.userName = #{userName};
+    </select>
+
     <!-- 根据用户名获取用户权限名 -->
     <select id="getPermissions" parameterType="String" resultType="String">
         select p.permission
@@ -42,6 +51,17 @@
         join permissions p on p.id = rp.permission_id
         where u.userName = #{userName};
     </select>
+
+    <!-- 根据用户名获取用户等级信息-->
+    <select id="getCusLevel" parameterType="String"
+            resultType="com.crayon.pojo.CusLevel">
+        select cl.cusLevelId,cl.levelName,cl.levelDiscount
+        from users
+        join customer c on users.userId = c.userId
+        join cuslevel cl on c.cusLevelId = cl.cusLevelId
+        where users.userName = #{userName};
+    </select>
+
     <!-- 创建用户 -->
     <insert id="insert" parameterType="com.crayon.pojo.user_manage.User"
             useGeneratedKeys="true" keyProperty="userId">

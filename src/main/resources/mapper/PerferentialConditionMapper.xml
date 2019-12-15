@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.crayon.dao.PreferentialConditionDao">
+
+    <!-- 根据优惠id查询-->
+    <select id="findById" parameterType="Integer" resultType="com.crayon.pojo.PreferentialCondition">
+        SELECT * FROM preferentialcondition pc
+        where pc.preConId = #{preConId};
+    </select>
+
+    <select id="findAll" resultType="com.crayon.pojo.PreferentialCondition">
+        select * from preferentialcondition;
+    </select>
+
+    <insert id="insert" parameterType="com.crayon.pojo.PreferentialCondition">
+        insert into preferentialcondition(preCondition, preCDescribe, preDiscount, preCLimit, preCReduceAmount)
+        value (#{preCondition}, #{preCDescribe}, #{preDiscount}, #{preCLimit}, #{preCReduceAmount});
+    </insert>
+
+    <update id="update" parameterType="com.crayon.pojo.PreferentialCondition">
+        update preferentialcondition
+        <set>
+            <if test="preCondition!=null">
+                preCondition = #{preCondition},
+            </if>
+            <if test="preCDescribe!=null">
+                preCDescribe = #{preCDescribe},
+            </if>
+            <if test="preDiscount!=null">
+                preDiscount = #{preDiscount},
+            </if>
+            <if test="preCLimit!=null">
+                preCLimit = #{preCLimit},
+            </if>
+            <if test="preCReduceAmount!=null">
+                rpreCReduceAmount = #{preCReduceAmount},
+            </if>
+        </set>
+        where preConId = #{preConId};
+    </update>
+
+    <delete id="delete" parameterType="Integer">
+        delete from preferentialcondition pc
+        where pc.preConId = #{preConId};
+    </delete>
+</mapper>
