@@ -3,8 +3,10 @@ package com.crayon.service.impl.user_manage;
 import com.crayon.dao.CusLevelDao;
 import com.crayon.dao.user_manage.CustomerDao;
 import com.crayon.dao.user_manage.UserDao;
+import com.crayon.dto.CusSimple;
 import com.crayon.dto.Result;
 import com.crayon.dto.UserRegisterBean;
+import com.crayon.pojo.CusLevel;
 import com.crayon.pojo.user_manage.Customer;
 import com.crayon.pojo.user_manage.User;
 import com.crayon.service.Helper.PasswordHelper;
@@ -13,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -151,15 +155,17 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Transactional(rollbackFor=Exception.class)
     @Override
     public Result registerForCustomer(UserRegisterBean userRegisterBean) {
         try{
             User user = new User(userRegisterBean);
-            if(userDao.findById(user.getUserId()).size()!=0){
+            if(user.getUserName()==null||user.getPassword()==null){
+                return new Result(false,"用户名或密码为空，请正确填写");
+            }else if (userDao.findById(user.getUserId()).size()!=0){
                 return new Result(false,"用户已存在");
             }else{
                 passwordHelper.encryptPassword(user);
-
                 //插入并且获取自增id
                 userDao.insert(user);
                 int userId = user.getUserId();
@@ -172,7 +178,30 @@ public class UserServiceImpl implements UserService {
             }
         }catch (Exception e){
             e.printStackTrace();
+            //出错则事务回滚
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return new Result(false,"Error");
         }
+    }
+
+    /**
+     * 根据用户名获取客户登录的简要信息
+     * @param userName
+     * @return
+     */
+    public CusSimple getCusSimple(String userName){
+        try{
+            CusLevel cusLevel = userDao.getCusLevel(userName);
+
+            CusSimple cusSimple = new CusSimple();
+            cusSimple.setUserName(userName);
+            cusSimple.setRole((String) userDao.getRoleDes(userName).toArray()[0]);
+            cusSimple.setLevelName(cusLevel.getLevelName());
+            cusSimple.setLevelDiscount(cusLevel.getLevelDiscount());
+            return cusSimple;
+        }catch (Exception e){
+            return new CusSimple();
+        }
+
     }
 }

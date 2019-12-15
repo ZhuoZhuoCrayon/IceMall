@@ -1,27 +1,24 @@
 package com.crayon.service.impl;
 
-import com.crayon.dao.ProductDao;
+import com.crayon.dao.PreferentialConditionDao;
 import com.crayon.dto.Result;
-import com.crayon.pojo.Product;
+import com.crayon.pojo.PreferentialCondition;
 import com.crayon.service.BaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Component
-@Service
-public class ProductServiceImpl implements BaseService<Product> {
+public class PreferentialConditionServiceImpl
+        implements BaseService<PreferentialCondition> {
     @Autowired
-    private ProductDao productDao;
+    private PreferentialConditionDao pcDao;
 
     @Override
-    public List<Product> findAll() {
+    public List<PreferentialCondition> findAll() {
         try{
-            return productDao.findAll();
+            return pcDao.findAll();
         }catch (Exception e){
             e.printStackTrace();
             return new ArrayList<>();
@@ -29,31 +26,27 @@ public class ProductServiceImpl implements BaseService<Product> {
     }
 
     @Override
-    public List<Product> findById(Integer id) {
+    public List<PreferentialCondition> findById(Integer id) {
         try{
-            return productDao.findById(id);
+            return pcDao.findById(id);
         }catch (Exception e){
             return new ArrayList<>();
         }
     }
 
     @Override
-    public List<Product> findByName(String name) {
-        try{
-            return productDao.findByName(name);
-        }catch (Exception e){
-            return new ArrayList<>();
-        }
+    public List<PreferentialCondition> findByName(String name) {
+        return null;
     }
 
     @Override
-    public Result insert(Product product) {
+    public Result insert(PreferentialCondition preferentialCondition) {
         try{
-            if (productDao.findById(product.getProId()).size()>0) {
-                return new Result(true,"该商品已存在");
+            if (pcDao.findById(preferentialCondition.getPreConId()).size() != 0) {
+                return new Result(true,"优惠编号已存在");
             }else{
-                productDao.insert(product);
-                return new Result(true,"添加商品成功");
+                pcDao.insert(preferentialCondition);
+                return new Result(true,"添加优惠成功");
 
             }
         }catch (Exception e){
@@ -63,10 +56,10 @@ public class ProductServiceImpl implements BaseService<Product> {
     }
 
     @Override
-    public Result update(Product product) {
+    public Result update(PreferentialCondition preferentialCondition) {
         try{
-            productDao.update(product);
-            return new Result(true,"更新商品成功");
+            pcDao.update(preferentialCondition);
+            return new Result(true,"更新优惠成功");
 
         }catch (DataIntegrityViolationException dataIVE){
             return new Result(false,"存在数据关联");
@@ -79,11 +72,11 @@ public class ProductServiceImpl implements BaseService<Product> {
     @Override
     public Result delete(Integer id) {
         try{
-            if(productDao.findById(id).size()==0){
-                return new Result(false,"商品不存在");
+            if(pcDao.findById(id).size()==0){
+                return new Result(false,"优惠不存在");
             }else{
-                productDao.deleteById(id);
-                return new Result(true,"删除商品成功");
+                pcDao.delete(id);
+                return new Result(true,"删除优惠成功");
             }
 
         }catch (DataIntegrityViolationException dataIVE){
@@ -95,9 +88,7 @@ public class ProductServiceImpl implements BaseService<Product> {
     }
 
     @Override
-    public String checkFormat(Product product) {
+    public String checkFormat(PreferentialCondition preferentialCondition) {
         return null;
     }
-
-
 }
