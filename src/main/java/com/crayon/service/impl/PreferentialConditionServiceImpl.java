@@ -13,12 +13,21 @@ import java.util.List;
 public class PreferentialConditionServiceImpl
         implements BaseService<PreferentialCondition> {
     @Autowired
-    private PreferentialConditionDao pcDao;
+    private PreferentialConditionDao preferentialConditionDao;
 
     @Override
-    public List<PreferentialCondition> findAll() {
+    public Integer countDOs() {
         try{
-            return pcDao.findAll();
+            return preferentialConditionDao.countPreferentialConditions();
+        }catch (Exception e){
+            return 0;
+        }
+    }
+
+    @Override
+    public List<PreferentialCondition> listAllDOs() {
+        try{
+            return preferentialConditionDao.listAllPreferentialConditions();
         }catch (Exception e){
             e.printStackTrace();
             return new ArrayList<>();
@@ -26,29 +35,28 @@ public class PreferentialConditionServiceImpl
     }
 
     @Override
-    public List<PreferentialCondition> findById(Integer id) {
+    public List<PreferentialCondition> listDOsById(Integer DOId) {
         try{
-            return pcDao.findById(id);
+            return preferentialConditionDao.listPreferentialConditionsById(DOId);
         }catch (Exception e){
             return new ArrayList<>();
         }
     }
 
     @Override
-    public List<PreferentialCondition> findByName(String name) {
-        return null;
+    public PreferentialCondition getDOByKey(Integer DOId) {
+        try{
+            return preferentialConditionDao.getPreferentialConditionByKey(DOId);
+        }catch (Exception e){
+            return null;
+        }
     }
 
     @Override
-    public Result insert(PreferentialCondition preferentialCondition) {
-        try{
-            if (pcDao.findById(preferentialCondition.getPreConId()).size() != 0) {
-                return new Result(true,"优惠编号已存在");
-            }else{
-                pcDao.insert(preferentialCondition);
-                return new Result(true,"添加优惠成功");
-
-            }
+    public Result insert(PreferentialCondition PreferentialCondition) {
+        try {
+            preferentialConditionDao.insert(PreferentialCondition);
+            return new Result(true,"插入优惠信息成功");
         }catch (Exception e){
             e.printStackTrace();
             return new Result(false,"Error");
@@ -56,10 +64,10 @@ public class PreferentialConditionServiceImpl
     }
 
     @Override
-    public Result update(PreferentialCondition preferentialCondition) {
+    public Result update(PreferentialCondition PreferentialCondition) {
         try{
-            pcDao.update(preferentialCondition);
-            return new Result(true,"更新优惠成功");
+            preferentialConditionDao.update(PreferentialCondition);
+            return new Result(true,"更新优惠信息成功");
 
         }catch (DataIntegrityViolationException dataIVE){
             return new Result(false,"存在数据关联");
@@ -70,13 +78,13 @@ public class PreferentialConditionServiceImpl
     }
 
     @Override
-    public Result delete(Integer id) {
+    public Result deleteById(Integer DOId) {
         try{
-            if(pcDao.findById(id).size()==0){
-                return new Result(false,"优惠不存在");
+            if(preferentialConditionDao.listPreferentialConditionsById(DOId).size()==0){
+                return new Result(false,"数据不存在");
             }else{
-                pcDao.delete(id);
-                return new Result(true,"删除优惠成功");
+                preferentialConditionDao.deleteById(DOId);
+                return new Result(true,"删除优惠信息成功");
             }
 
         }catch (DataIntegrityViolationException dataIVE){
@@ -88,7 +96,7 @@ public class PreferentialConditionServiceImpl
     }
 
     @Override
-    public String checkFormat(PreferentialCondition preferentialCondition) {
-        return null;
+    public Result deleteByKey(Integer DOId) {
+        return deleteById(DOId);
     }
 }

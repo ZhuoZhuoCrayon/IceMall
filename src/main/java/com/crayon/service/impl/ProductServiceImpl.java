@@ -19,9 +19,18 @@ public class ProductServiceImpl implements BaseService<Product> {
     private ProductDao productDao;
 
     @Override
-    public List<Product> findAll() {
+    public Integer countDOs() {
         try{
-            return productDao.findAll();
+            return productDao.countProducts();
+        }catch (Exception e){
+            return 0;
+        }
+    }
+
+    @Override
+    public List<Product> listAllDOs() {
+        try{
+            return productDao.listAllProducts();
         }catch (Exception e){
             e.printStackTrace();
             return new ArrayList<>();
@@ -29,33 +38,28 @@ public class ProductServiceImpl implements BaseService<Product> {
     }
 
     @Override
-    public List<Product> findById(Integer id) {
+    public List<Product> listDOsById(Integer DOId) {
         try{
-            return productDao.findById(id);
+            return productDao.listProductsById(DOId);
         }catch (Exception e){
             return new ArrayList<>();
         }
     }
 
     @Override
-    public List<Product> findByName(String name) {
+    public Product getDOByKey(Integer DOId) {
         try{
-            return productDao.findByName(name);
+            return productDao.getProductByKey(DOId);
         }catch (Exception e){
-            return new ArrayList<>();
+            return null;
         }
     }
 
     @Override
-    public Result insert(Product product) {
-        try{
-            if (productDao.findById(product.getProId()).size()>0) {
-                return new Result(true,"该商品已存在");
-            }else{
-                productDao.insert(product);
-                return new Result(true,"添加商品成功");
-
-            }
+    public Result insert(Product Product) {
+        try {
+            productDao.insert(Product);
+            return new Result(true,"插入商品成功");
         }catch (Exception e){
             e.printStackTrace();
             return new Result(false,"Error");
@@ -77,12 +81,12 @@ public class ProductServiceImpl implements BaseService<Product> {
     }
 
     @Override
-    public Result delete(Integer id) {
+    public Result deleteById(Integer DOId) {
         try{
-            if(productDao.findById(id).size()==0){
-                return new Result(false,"商品不存在");
+            if(productDao.listProductsById(DOId).size()==0){
+                return new Result(false,"数据不存在");
             }else{
-                productDao.deleteById(id);
+                productDao.deleteById(DOId);
                 return new Result(true,"删除商品成功");
             }
 
@@ -95,8 +99,8 @@ public class ProductServiceImpl implements BaseService<Product> {
     }
 
     @Override
-    public String checkFormat(Product product) {
-        return null;
+    public Result deleteByKey(Integer DOId) {
+        return deleteById(DOId);
     }
 
 

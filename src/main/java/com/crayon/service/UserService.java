@@ -1,27 +1,46 @@
 package com.crayon.service;
 
+import com.crayon.dto.CusSimple;
 import com.crayon.dto.Result;
 import com.crayon.dto.UserRegisterBean;
 import com.crayon.pojo.user_manage.User;
-
-import java.util.List;
 import java.util.Set;
 
 public interface UserService extends BaseService<User>{
+
     /**
-     * 获取用户身份
-     * @param username
+     * 根据用户名获取用户
+     * @param userName
      * @return
      */
-    Set<String> getRoles(String username);
+    User getUserByName(String userName);
+    /**
+     * 通过用户名获取用户身份
+     * @param userName
+     * @return
+     */
+    Set<String> getRolesByUserName(String userName);
 
+    /**
+     * 根据用户名获取身份描述
+     * @param userName
+     * @return
+     */
+    Set<String> getRoleDesByUserName(String userName);
     /**
      * 获取用户权限
-     * @param username
+     * @param userName
      * @return
      */
-    Set<String> getPermissions(String username);
+    Set<String>getPermissionsByUserName(String userName);
 
+
+    /**
+     * 获取用户登录信息
+     * @param userName
+     * @return
+     */
+    CusSimple getCusSimple(String userName);
     /**
      * 修改用户密码
      * @param id
@@ -32,7 +51,7 @@ public interface UserService extends BaseService<User>{
 
     /**
      * 客户注册接口
-     * @param user
+     * @param userRegisterBean
      * @return
      */
     Result registerForCustomer(UserRegisterBean userRegisterBean);

@@ -20,9 +20,18 @@ public class RoleServiceImpl implements BaseService<Role> {
     private RoleDao roleDao;
 
     @Override
-    public List<Role> findAll() {
+    public Integer countDOs() {
         try{
-            return roleDao.findAll();
+            return roleDao.countRoles();
+        }catch (Exception e){
+            return 0;
+        }
+    }
+
+    @Override
+    public List<Role> listAllDOs() {
+        try{
+            return roleDao.listAllRoles();
         }catch (Exception e){
             e.printStackTrace();
             return new ArrayList<>();
@@ -30,29 +39,28 @@ public class RoleServiceImpl implements BaseService<Role> {
     }
 
     @Override
-    public List<Role> findById(Integer id) {
+    public List<Role> listDOsById(Integer DOId) {
         try{
-            return roleDao.findById(id);
+            return roleDao.listRolesById(DOId);
         }catch (Exception e){
             return new ArrayList<>();
         }
     }
 
     @Override
-    public List<Role> findByName(String name) {
-        return null;
+    public Role getDOByKey(Integer DOId) {
+        try{
+            return roleDao.getRoleByKey(DOId);
+        }catch (Exception e){
+            return null;
+        }
     }
 
     @Override
-    public Result insert(Role role) {
-        try{
-            if (roleDao.findById(role.getId()).size() != 0) {
-                return new Result(true,"身份编号已存在");
-            }else{
-                roleDao.insert(role);
-                return new Result(true,"添加身份成功");
-
-            }
+    public Result insert(Role Role) {
+        try {
+            roleDao.insert(Role);
+            return new Result(true,"插入角色成功");
         }catch (Exception e){
             e.printStackTrace();
             return new Result(false,"Error");
@@ -60,10 +68,10 @@ public class RoleServiceImpl implements BaseService<Role> {
     }
 
     @Override
-    public Result update(Role role) {
+    public Result update(Role Role) {
         try{
-            roleDao.update(role);
-            return new Result(true,"更新身份成功");
+            roleDao.update(Role);
+            return new Result(true,"更新角色成功");
 
         }catch (DataIntegrityViolationException dataIVE){
             return new Result(false,"存在数据关联");
@@ -74,13 +82,13 @@ public class RoleServiceImpl implements BaseService<Role> {
     }
 
     @Override
-    public Result delete(Integer id) {
+    public Result deleteById(Integer DOId) {
         try{
-            if(roleDao.findById(id).size()==0){
-                return new Result(false,"身份不存在");
+            if(roleDao.listRolesById(DOId).size()==0){
+                return new Result(false,"数据不存在");
             }else{
-                roleDao.delete(id);
-                return new Result(true,"删除身份成功");
+                roleDao.deleteById(DOId);
+                return new Result(true,"删除角色成功");
             }
 
         }catch (DataIntegrityViolationException dataIVE){
@@ -92,7 +100,7 @@ public class RoleServiceImpl implements BaseService<Role> {
     }
 
     @Override
-    public String checkFormat(Role role) {
-        return null;
+    public Result deleteByKey(Integer DOId) {
+        return deleteById(DOId);
     }
 }

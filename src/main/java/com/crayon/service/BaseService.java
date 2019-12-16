@@ -4,54 +4,63 @@ import com.crayon.dto.Result;
 
 import java.util.List;
 
-public interface BaseService<T> {
+public interface BaseService<DO> {
+
     /**
-     * 获取表单
+     * 获取数据量
+     * @return 数量
+     * @throws Exception
+     */
+    Integer countDOs();
+
+    /**
+     * 获取所有的数据
      * @return
+     * @throws Exception
      */
-    List<T> findAll ();
+    List<DO> listAllDOs();
 
     /**
-     * 根据id查询
-     * @param id
+     * 根据Id查找
+     * @param DOId
      * @return
+     * @throws Exception
      */
-    List<T> findById(Integer id);
+    List<DO> listDOsById(Integer DOId);
 
     /**
-     * 根据名称查找
-     * @param name
+     * 根据主码查找
+     * @param DOId
      * @return
+     * @throws Exception
      */
-    List<T> findByName(String name);
+    DO getDOByKey(Integer DOId);
 
     /**
-     * 插入数据
-     * @param t
+     * 插入并获得自增Id
+     * @param DO
+     * @throws Exception
      */
+    Result insert(DO DO);
 
-    Result insert(T t);
-
-    /**
-     * 更新bug：如果撞id，会导致修改另外一行
-     * 所以是需要两个参数的，原id和修改的元组
-     */
     /**
      * 更新
-     * @param t
+     * @param DO
+     * @throws Exception
      */
-    Result update(T t);
+    Result update(DO DO);
 
     /**
-     * 删除
-     * @param id
+     * 根据Id删除
+     * @param DOId
+     * @throws Exception
      */
-    Result delete(Integer id);
+    Result deleteById(Integer DOId);
 
     /**
-     * 格式检查
-     * @param t
-     * @return 格式错误信息
+     * 根据主码删除
+     * @param DOId
+     * @throws Exception
      */
-    String checkFormat(T t);
+    Result deleteByKey(Integer DOId);
 }

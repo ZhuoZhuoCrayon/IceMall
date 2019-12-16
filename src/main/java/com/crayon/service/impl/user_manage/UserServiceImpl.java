@@ -34,9 +34,18 @@ public class UserServiceImpl implements UserService {
     private PasswordHelper passwordHelper;
 
     @Override
-    public List<User> findAll() {
+    public Integer countDOs(){
+        try {
+            return userDao.countUsers();
+        }catch (Exception e){
+            return 0;
+        }
+    }
+
+    @Override
+    public List<User> listAllDOs() {
         try{
-            return userDao.findAll();
+            return userDao.listAllUsers();
         }catch (Exception e){
             e.printStackTrace();
             return new ArrayList<>();
@@ -44,9 +53,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> findById(Integer id) {
+    public List<User> listDOsById(Integer id) {
         try{
-            return userDao.findById(id);
+            return userDao.listUsersById(id);
         }catch (Exception e){
             e.printStackTrace();
             return new ArrayList<>();
@@ -54,19 +63,20 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> findByName(String name) {
+    public User getDOByKey(Integer DOId){
         try{
-            return userDao.findByName(name);
+            return userDao.getUserByKey(DOId);
         }catch (Exception e){
             e.printStackTrace();
-            return new ArrayList<>();
+            return null;
         }
     }
+
 
     @Override
     public Result insert(User user) {
         try{
-            if(userDao.findById(user.getUserId()).size()!=0){
+            if(userDao.getUserByKey(user.getUserId())!=null){
                 return new Result(false,"用户已存在");
             }else{
                 passwordHelper.encryptPassword(user);
@@ -83,7 +93,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public Result update(User user) {
         try{
-            if(userDao.findById(user.getUserId()).size()==0){
+            if(userDao.getUserByKey(user.getUserId())!=null){
                 return new Result(false,"用户不存在");
             }else{
                 passwordHelper.encryptPassword(user);
@@ -99,12 +109,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Result delete(Integer id) {
+    public Result deleteById(Integer DOId){
+        return deleteByKey(DOId);
+    }
+
+    @Override
+    public Result deleteByKey(Integer DOId){
         try{
-            if(userDao.findById(id).size()==0){
+            if(userDao.getUserByKey(DOId)==null){
                 return new Result(false,"用户不存在");
             }else{
-                userDao.delete(id);
+                userDao.deleteById(DOId);
                 return new Result(true,"删除用户成功");
             }
 
@@ -116,15 +131,21 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+
     @Override
-    public String checkFormat(User user) {
-        return null;
+    public User getUserByName(String userName) {
+        try{
+            return userDao.getUserByName(userName);
+        }catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
     }
 
     @Override
-    public Set<String> getRoles(String username) {
+    public Set<String> getRolesByUserName(String userName) {
         try{
-            return userDao.getRoles(username);
+            return userDao.getRolesByUserName(userName);
         }catch (Exception e){
             e.printStackTrace();
             return new TreeSet<>();
@@ -132,9 +153,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Set<String> getPermissions(String username) {
+    public Set<String> getRoleDesByUserName(String userName) {
         try{
-            return userDao.getPermissions(username);
+            return userDao.getRoleDesByUserName(userName);
+        }catch (Exception e){
+            e.printStackTrace();
+            return new TreeSet<>();
+        }
+    }
+
+    @Override
+    public Set<String> getPermissionsByUserName(String userName) {
+        try{
+            return userDao.getPermissionsByUserName(userName);
         }catch (Exception e){
             e.printStackTrace();
             return new TreeSet<>();
@@ -144,7 +175,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public Result changePassword(Integer id, String newPassword) {
         try {
-            User user = userDao.findById(id).get(0);
+            User user = userDao.getUserByKey(id);
             user.setPassword(newPassword);
             passwordHelper.encryptPassword(user);
             userDao.update(user);
@@ -162,8 +193,8 @@ public class UserServiceImpl implements UserService {
             User user = new User(userRegisterBean);
             if(user.getUserName()==null||user.getPassword()==null){
                 return new Result(false,"用户名或密码为空，请正确填写");
-            }else if (userDao.findById(user.getUserId()).size()!=0){
-                return new Result(false,"用户已存在");
+            }else if (userDao.getUserByName(user.getUserName())!=null){
+                return new Result(false,"用户名已存在");
             }else{
                 passwordHelper.encryptPassword(user);
                 //插入并且获取自增id
@@ -189,13 +220,14 @@ public class UserServiceImpl implements UserService {
      * @param userName
      * @return
      */
+    @Override
     public CusSimple getCusSimple(String userName){
         try{
-            CusLevel cusLevel = userDao.getCusLevel(userName);
+            CusLevel cusLevel = userDao.getCusLevelByUserName(userName);
 
             CusSimple cusSimple = new CusSimple();
             cusSimple.setUserName(userName);
-            cusSimple.setRole((String) userDao.getRoleDes(userName).toArray()[0]);
+            cusSimple.setRole((String) userDao.getRoleDesByUserName(userName).toArray()[0]);
             cusSimple.setLevelName(cusLevel.getLevelName());
             cusSimple.setLevelDiscount(cusLevel.getLevelDiscount());
             return cusSimple;
