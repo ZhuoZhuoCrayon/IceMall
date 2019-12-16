@@ -4,18 +4,36 @@
 
 <mapper namespace="com.crayon.dao.PreferentialConditionDao">
 
+
+    <select id="countPreferentialConditions" resultType="Integer">
+        select count(*)
+        from preferentialcondition;
+    </select>
+
+    <select id="listAllPreferentialConditions"
+            resultType="com.crayon.pojo.PreferentialCondition">
+        select * from preferentialcondition;
+    </select>
+
     <!-- 根据优惠id查询-->
-    <select id="findById" parameterType="Integer" resultType="com.crayon.pojo.PreferentialCondition">
+    <select id="listPreferentialConditionsById" parameterType="Integer"
+            resultType="com.crayon.pojo.PreferentialCondition">
         SELECT * FROM preferentialcondition pc
         where pc.preConId = #{preConId};
     </select>
 
-    <select id="findAll" resultType="com.crayon.pojo.PreferentialCondition">
-        select * from preferentialcondition;
+    <!-- 根据优惠主码查询-->
+    <select id="getPreferentialConditionByKey" parameterType="Integer"
+            resultType="com.crayon.pojo.PreferentialCondition">
+        SELECT * FROM preferentialcondition pc
+        where pc.preConId = #{preConId};
     </select>
 
-    <insert id="insert" parameterType="com.crayon.pojo.PreferentialCondition">
-        insert into preferentialcondition(preCondition, preCDescribe, preDiscount, preCLimit, preCReduceAmount)
+
+    <insert id="insert" parameterType="com.crayon.pojo.PreferentialCondition"
+            useGeneratedKeys="true" keyProperty="preConId">
+        insert into preferentialcondition(preCondition, preCDescribe,
+            preDiscount, preCLimit, preCReduceAmount)
         value (#{preCondition}, #{preCDescribe}, #{preDiscount}, #{preCLimit}, #{preCReduceAmount});
     </insert>
 
@@ -41,7 +59,12 @@
         where preConId = #{preConId};
     </update>
 
-    <delete id="delete" parameterType="Integer">
+    <delete id="deleteById" parameterType="Integer">
+        delete from preferentialcondition pc
+        where pc.preConId = #{preConId};
+    </delete>
+
+    <delete id="deleteByKey" parameterType="Integer">
         delete from preferentialcondition pc
         where pc.preConId = #{preConId};
     </delete>

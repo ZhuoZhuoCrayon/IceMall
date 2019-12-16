@@ -5,38 +5,46 @@
 <mapper namespace="com.crayon.dao.ProductDao">
 
     <!-- 获取商品总数-->
-    <select id="selectCount" resultType="Integer">
+    <select id="countProducts" resultType="Integer">
         select count(*) from product;
     </select>
 
-    <select id="findAll" resultType="com.crayon.pojo.Product">
+    <select id="listAllProducts" resultType="com.crayon.pojo.Product">
         select * from product;
     </select>
 
-
-    <!-- 分页查询-->
-    <select id="findByPage" resultType="com.crayon.pojo.Product">
-        select * from product
-        limit #{start},#{size};
-    </select>
-
     <!-- 根据proId查询-->
-    <select id="findById" parameterType="Integer" resultType="com.crayon.pojo.Product">
+    <select id="listProductsById" parameterType="Integer"
+            resultType="com.crayon.pojo.Product">
         SELECT * FROM product pro
         where pro.proId = #{proId};
     </select>
 
     <!-- 根据proName查询-->
-    <select id="finByName" parameterType="String"
+    <select id="listProductsByName" parameterType="String"
             resultType="com.crayon.pojo.Product">
         SELECT * FROM product pro
         where pro.proName = #{proName};
     </select>
 
     <!-- 根据productionBatch查询-->
-    <select id="finByProductionBatch" parameterType="String" resultType="com.crayon.pojo.Product">
+    <select id="listProductsByProductionBatch" parameterType="String"
+            resultType="com.crayon.pojo.Product">
         SELECT * FROM product pro
         where pro.productionBatch = #{productionBatch};
+    </select>
+
+    <!-- 分页查询-->
+    <select id="listProductsByPage" resultType="com.crayon.pojo.Product">
+        select * from product
+        limit #{start},#{size};
+    </select>
+
+    <!-- 根据产品Id查询-->
+    <select id="getProductByKey" parameterType="String"
+            resultType="com.crayon.pojo.Product">
+        SELECT * FROM product pro
+        where pro.proId = #{proId};
     </select>
 
     <!-- 获取指定商品销量 proId,Status-->
@@ -46,6 +54,7 @@
         join productlist p on op.proListId = p.proListId
         where p.proId = #{proId} and o.ordStatus = #{ordStatus};
     </select>
+
 
 
     <!-- 插入商品 -->
@@ -96,6 +105,11 @@
     </update>
 
     <delete id="deleteById" parameterType="Integer">
+        delete from product
+        where proId = #{proid}
+    </delete>
+
+    <delete id="deleteByKey" parameterType="Integer">
         delete from product
         where proId = #{proid}
     </delete>

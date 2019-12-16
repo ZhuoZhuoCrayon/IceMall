@@ -4,21 +4,35 @@
 
 <mapper namespace="com.crayon.dao.CusLevelDao">
 
+
+    <select id="countCusLevels" resultType="Integer">
+        select count(*)
+        from cuslevel;
+    </select>
+
+    <select id="listAllCusLevels" resultType="com.crayon.pojo.CusLevel">
+        select * from cuslevel;
+    </select>
+
     <!-- 根据cusLevelId查询-->
-    <select id="findById" parameterType="Integer"
+    <select id="listCusLevelsById" parameterType="Integer"
             resultType="com.crayon.pojo.CusLevel">
         SELECT * FROM cuslevel
         where cusLevelId = #{cusLevelId};
     </select>
 
-    <select id="findAll" resultType="com.crayon.pojo.CusLevel">
-        select * from cuslevel;
+    <!-- 根据cusLevel的主码查询-->
+    <select id="getCusLevelByKey" parameterType="Integer"
+            resultType="com.crayon.pojo.CusLevel">
+        SELECT * FROM cuslevel
+        where cusLevelId = #{cusLevelId};
     </select>
+
 
     <insert id="insert" parameterType="com.crayon.pojo.CusLevel"
             useGeneratedKeys="true" keyProperty="cusLevelId">
-        insert into cuslevel
-        value (#{cusLevelId},#{levelName},#{levelDiscount});
+        insert into cuslevel(levelName, levelDiscount)
+        value (#{levelName},#{levelDiscount});
     </insert>
 
     <update id="update" parameterType="com.crayon.pojo.CusLevel">
@@ -34,7 +48,12 @@
         where cusLevelId = #{cusLevelId};
     </update>
 
-    <delete id="delete" parameterType="Integer">
+    <delete id="cusLevelId" parameterType="Integer">
+        delete from cuslevel
+        where cusLevelId = #{cusLevelId};
+    </delete>
+
+    <delete id="deleteByKey" parameterType="Integer">
         delete from cuslevel
         where cusLevelId = #{cusLevelId};
     </delete>

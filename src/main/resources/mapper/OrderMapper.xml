@@ -4,12 +4,25 @@
 
 <mapper namespace="com.crayon.dao.OrderDao">
 
-    <select id="findAll" resultType="com.crayon.pojo.Order">
+
+
+    <select id="countOrders" resultType="Integer">
+        select count(*)
+        from orders;
+    </select>
+
+    <select id="listAllOrders" resultType="com.crayon.pojo.Order">
         select * from orders;
     </select>
 
     <!-- 根据orderId查询-->
-    <select id="findById" parameterType="Integer" resultType="com.crayon.pojo.Order">
+    <select id="listOrdersById" parameterType="Integer" resultType="com.crayon.pojo.Order">
+        SELECT * FROM orders
+        where orderId = #{orderId};
+    </select>
+
+    <!-- 根据order主码查询-->
+    <select id="getOrderByKey" parameterType="Integer" resultType="com.crayon.pojo.Order">
         SELECT * FROM orders
         where orderId = #{orderId};
     </select>
@@ -49,6 +62,11 @@
     </update>
 
     <delete id="deleteById" parameterType="Integer">
+        delete from orders
+        where orderId = #{orderId}
+    </delete>
+
+    <delete id="deleteByKey" parameterType="Integer">
         delete from orders
         where orderId = #{orderId}
     </delete>
