@@ -29,7 +29,7 @@ public class TestDao {
     public void testPermission() throws Exception{
         PermissionDao permissionDao = (PermissionDao) applicationContext.
                 getBean("permissionDao");
-        List<Permission> permissions = permissionDao.findAll();
+        List<Permission> permissions = permissionDao.listAllPermissions();
         for(Permission permission:permissions){
             System.out.println(permission.getId());
         }
@@ -38,7 +38,7 @@ public class TestDao {
     public void testProduct() throws Exception{
         ProductDao productDao = (ProductDao) applicationContext.
                 getBean("productDao");
-        Product product = productDao.findByKey(1,"191206");
+        Product product = productDao.getProductByKey(1);
         product.setProStatus("0");
         productDao.update(product);
     }
@@ -46,16 +46,14 @@ public class TestDao {
     @Test
     public void testRole() throws Exception{
         RoleDao roleDao = (RoleDao) applicationContext.getBean("roleDao");
-        List<Role> roles = roleDao.findById(1);
-        for(Role role:roles){
-            System.out.println(role.getId());
-        }
+        Role role = roleDao.getRoleByKey(1);
+        System.out.println(role.getId());
     }
 
     @Test
     public void testUser() throws Exception{
         UserDao userDao = (UserDao) applicationContext.getBean("userDao");
-        User user = userDao.findById(1).get(0);
+        User user = userDao.getUserByKey(1);
         user.setPassword("1233");
         userDao.update(user);
     }
