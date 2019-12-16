@@ -120,7 +120,10 @@
         <property name="successUrl" value="/index.jsp"/>
         <property name="filters">
             <util:map>
+
+                <!--
                 <entry key="authc" value-ref="formAuthenticationFilter"/>
+                -->
                 <entry key="perms" value-ref="MyPermissionFilter"/>
                 <entry key="roles" value-ref="MyPermissionFilter"/>
             </util:map>
@@ -152,7 +155,7 @@
         <property name="exceptionMappings">
             <props>
                 <!-- 无权限跳转到登陆页，可自行定义 -->
-                <prop key="org.apache.shiro.authz.UnauthorizedException">/login.html</prop>
+                <prop key="org.apache.shiro.authz.UnauthorizedException">/test.html</prop>
             </props>
         </property>
     </bean>

@@ -15,9 +15,19 @@
     <!--scan controller package-->
     <context:component-scan base-package="com.crayon.controller"/>
 
+    <!--注入swagger配置-->
+    <bean class="com.crayon.swagger.SwaggerConfig"/>
+
+    <!-- 引用Swagger 默认配置 -->
+    <bean class="springfox.documentation.swagger2.configuration.Swagger2DocumentationConfiguration" id="swagger2Config"/>
 
     <!-- 配置springmvc的驱动，并开启了对JSON数据格式的支持 -->
     <mvc:annotation-driven/>
+    <!-- 静态资源文件，不会被Spring MVC拦截 -->
+    <mvc:resources mapping="/swagger/**" location="/swagger/" />
+    <!-- 不拦截测试接口 -->
+    <mvc:resources mapping="/API/**" location="/API/" />
+
 
     <!-- 配置视图解析器 -->
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
@@ -30,4 +40,5 @@
     <bean id="exceptionHandlerExceptionResolver"
           class="org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver">
     </bean>
+
 </beans>
