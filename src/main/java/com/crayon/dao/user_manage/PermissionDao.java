@@ -6,9 +6,12 @@ import java.util.List;
 
 public interface PermissionDao {
 
-    List<Permission> findAll() throws Exception;
-    List<Permission> findById(Integer id) throws Exception;
+    Integer countPermissions() throws Exception;
+    List<Permission> listAllPermissions() throws Exception;
+    List<Permission> listPermissionsById(Integer userId) throws Exception;
+    Permission getPermissionByKey(Integer userId) throws Exception;
     void insert(Permission permission) throws Exception;
     void update(Permission permission) throws Exception;
-    void delete(Integer id) throws Exception;
+    void deleteById(Integer userId) throws Exception;
+    void deleteByKey(Integer userId) throws Exception;
 }

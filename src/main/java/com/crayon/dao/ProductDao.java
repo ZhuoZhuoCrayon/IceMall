@@ -7,13 +7,11 @@ import java.util.List;
 
 public interface ProductDao {
 
-    /**
-     * @return 商品总量
-     * @throws Exception
-     */
-    Integer selectCount()throws Exception;
-    List<Product> findAll() throws Exception;
-    List<Product> findById(Integer id) throws Exception;
+    Integer countProducts() throws Exception;
+    List<Product> listAllProducts() throws Exception;
+    List<Product> listProductsById(Integer ProductId) throws Exception;
+    List<Product> listProductsByName(String proName) throws Exception;
+    List<Product> listProductsByProductionBatch(String productionBatch) throws Exception;
 
     /**
      * 分页查询
@@ -22,12 +20,12 @@ public interface ProductDao {
      * @return
      * @throws Exception
      */
-    List<Product> findByPage(@Param("start") Integer start,
+    List<Product> listProductsByPage(@Param("start") Integer start,
                              @Param("size") Integer size) throws Exception;
 
-    void insert(Product product) throws Exception;
-    void update(Product product) throws Exception;
-    void deleteById(Integer id) throws Exception;
+
+
+    Product getProductByKey(Integer ProductId) throws Exception;
 
     /**
      * 根据商品id获取销量
@@ -39,7 +37,8 @@ public interface ProductDao {
     Integer getProductSales(@Param("proId") Integer proId,
                             @Param("ordStatus") Integer ordStatus) throws Exception;
 
-
-    List<Product> findByName(String proName) throws Exception;
-    List<Product> finByProductionBatch(String productionBatch) throws Exception;
+    void insert(Product Product) throws Exception;
+    void update(Product Product) throws Exception;
+    void deleteById(Integer ProductId) throws Exception;
+    void deleteByKey(Integer ProductId) throws Exception;
 }
