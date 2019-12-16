@@ -4,18 +4,30 @@
 
 <mapper namespace="com.crayon.dao.user_manage.CustomerDao">
 
+    <select id="countCustomers" resultType="Integer">
+        select count(*)
+        from customer;
+    </select>
+
+    <select id="listAllCustomers" resultType="com.crayon.pojo.user_manage.Customer">
+        select * from customer;
+    </select>
+
     <!-- 根据身份id查询-->
-    <select id="findById" parameterType="Integer"
+    <select id="listCustomersById" parameterType="Integer"
             resultType="com.crayon.pojo.user_manage.Customer">
         SELECT * FROM customer
         where userId = #{userId};
     </select>
 
-    <select id="findAll" resultType="com.crayon.pojo.user_manage.Customer">
-        select * from customer;
+    <!-- 根据身份id查询-->
+    <select id="getCustomerByKey" parameterType="Integer"
+            resultType="com.crayon.pojo.user_manage.Customer">
+        SELECT * FROM customer
+        where userId = #{userId};
     </select>
 
-    <insert id="insert" parameterType="com.crayon.pojo.user_manage.Customer">
+    <insert id="insert" parameterType="com.crayon.pojo.user_manage.Customer" >
         insert into customer
         value (#{userId},#{cusStatus},#{cusLevelId});
     </insert>
@@ -33,7 +45,12 @@
         where userId = #{userId};
     </update>
 
-    <delete id="delete" parameterType="Integer">
+    <delete id="deleteById" parameterType="Integer">
+        delete from customer
+        where userId = #{userId};
+    </delete>
+
+    <delete id="deleteByKey" parameterType="Integer">
         delete from customer
         where userId = #{userId};
     </delete>

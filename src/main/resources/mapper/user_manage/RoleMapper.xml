@@ -4,19 +4,32 @@
 
 <mapper namespace="com.crayon.dao.user_manage.RoleDao">
 
+    <select id="countRoles" resultType="Integer">
+        select count(*)
+        from roles;
+    </select>
+
+    <select id="listAllRoles" resultType="com.crayon.pojo.user_manage.Role">
+        select * from roles;
+    </select>
+
     <!-- 根据权限id查询-->
-    <select id="findById" parameterType="Integer" resultType="com.crayon.pojo.user_manage.Role">
+    <select id="listRolesById" parameterType="Integer"
+            resultType="com.crayon.pojo.user_manage.Role">
         SELECT * FROM roles r
         where r.id = #{id};
     </select>
 
-    <select id="findAll" resultType="com.crayon.pojo.user_manage.Role">
-        select * from roles;
+    <select id="getRoleByKey" parameterType="Integer"
+            resultType="com.crayon.pojo.user_manage.Role">
+        SELECT * FROM roles r
+        where r.id = #{id};
     </select>
 
-    <insert id="insert" parameterType="com.crayon.pojo.user_manage.Role">
-        insert into roles
-        value (#{id},#{role},#{description});
+    <insert id="insert" parameterType="com.crayon.pojo.user_manage.Role"
+            useGeneratedKeys="true" keyProperty="id">
+        insert into roles(role, description)
+        value (#{role},#{description});
     </insert>
 
     <update id="update" parameterType="com.crayon.pojo.user_manage.Role">
@@ -32,7 +45,12 @@
         where id = #{id};
     </update>
 
-    <delete id="delete" parameterType="Integer">
+    <delete id="deleteById" parameterType="Integer">
+        delete from roles
+        where id = #{id};
+    </delete>
+
+    <delete id="deleteByKey" parameterType="Integer">
         delete from roles
         where id = #{id};
     </delete>

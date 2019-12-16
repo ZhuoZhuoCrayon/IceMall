@@ -5,26 +5,42 @@
 <mapper namespace="com.crayon.dao.user_manage.UserDao">
 
 
-    <!-- 根据用户名查询 -->
-    <select id="findByName" parameterType="String"
-            resultType="com.crayon.pojo.user_manage.User">
-        SELECT * FROM users
-        WHERE userName = #{userName};
+    <select id="countUsers">
+        select count (*)
+        from users;
+    </select>
+
+
+    <select id="listAllUsers" resultType="com.crayon.pojo.user_manage.User">
+        select * from users;
     </select>
 
     <!-- 根据ID查询用户 -->
-    <select id="findById" parameterType="Integer"
+    <select id="listUsersById" parameterType="Integer"
             resultType="com.crayon.pojo.user_manage.User">
         SELECT * FROM users
         WHERE userId = #{userId}
     </select>
 
-    <select id="findAll" resultType="com.crayon.pojo.user_manage.User">
-        select * from users;
+    <!-- 根据主码查询用户 -->
+    <select id="getUserByKey" parameterType="Integer"
+            resultType="com.crayon.pojo.user_manage.User">
+        SELECT * FROM users
+        WHERE userId = #{userId}
     </select>
 
+
+    <!-- 根据用户名查询 -->
+    <select id="getUserByName" parameterType="String"
+            resultType="com.crayon.pojo.user_manage.User">
+        SELECT * FROM users
+        WHERE userName = #{userName};
+    </select>
+
+
+
     <!-- 根据用户名获取用户角色名 -->
-    <select id="getRoles" parameterType="String" resultType="String">
+    <select id="getRolesByUserName" parameterType="String" resultType="String">
         select r.role
         from users u
         join users_roles ur on ur.user_id = u.userId
@@ -33,7 +49,7 @@
     </select>
 
     <!-- 根据用户名获取用户角色名中文昵称 -->
-    <select id="getRoleDes" parameterType="String" resultType="String">
+    <select id="getRoleDesByUserName" parameterType="String" resultType="String">
         select r.description
         from users u
         join users_roles ur on ur.user_id = u.userId
@@ -42,7 +58,7 @@
     </select>
 
     <!-- 根据用户名获取用户权限名 -->
-    <select id="getPermissions" parameterType="String" resultType="String">
+    <select id="getPermissionsByUserName" parameterType="String" resultType="String">
         select p.permission
         from users u
         join users_roles ur on ur.user_id = u.userId
@@ -53,7 +69,7 @@
     </select>
 
     <!-- 根据用户名获取用户等级信息-->
-    <select id="getCusLevel" parameterType="String"
+    <select id="getCusLevelByUserName" parameterType="String"
             resultType="com.crayon.pojo.CusLevel">
         select cl.cusLevelId,cl.levelName,cl.levelDiscount
         from users
@@ -76,11 +92,6 @@
         values (null,#{userId},(select id from roles where role=#{roleName}))
     </insert>
 
-    <!-- 移除用户 -->
-    <delete id="delete" parameterType="Integer">
-        DELETE FROM users
-        WHERE userId = #{userId};
-    </delete>
 
     <!-- 更新用户信息 -->
     <update id="update" parameterType="com.crayon.pojo.user_manage.User">
@@ -110,5 +121,17 @@
         </set>
         WHERE userId = #{userId};
     </update>
+
+    <!-- 通过Id移除用户 -->
+    <delete id="delete" parameterType="Integer">
+        DELETE FROM users
+        WHERE userId = #{userId};
+    </delete>
+
+    <!-- 通过主码移除用户 -->
+    <delete id="deleteByKey" parameterType="Integer">
+        DELETE FROM users
+        WHERE userId = #{userId};
+    </delete>
 
 </mapper>

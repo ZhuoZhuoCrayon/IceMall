@@ -4,19 +4,32 @@
 
 <mapper namespace="com.crayon.dao.user_manage.PermissionDao">
 
-    <select id="findAll" resultType="com.crayon.pojo.user_manage.Permission">
+    <select id="countPermissions" resultType="Integer">
+        select count(*)
+        from permissions;
+    </select>
+
+    <select id="listAllPermissions"
+            resultType="com.crayon.pojo.user_manage.Permission">
         select * from permissions;
     </select>
 
-    <select id="findById" parameterType="Integer"
+    <select id="listPermissionsById" parameterType="Integer"
             resultType="com.crayon.pojo.user_manage.Permission">
         SELECT * FROM permissions p
         where p.id = #{id}
     </select>
 
-    <insert id="insert" parameterType="com.crayon.pojo.user_manage.Permission">
-        insert into permissions
-        value (#{id},#{permission},#{perms});
+    <select id="getPermissionByKey" parameterType="Integer"
+            resultType="com.crayon.pojo.user_manage.Permission">
+        SELECT * FROM permissions p
+        where p.id = #{id}
+    </select>
+
+    <insert id="insert" parameterType="com.crayon.pojo.user_manage.Permission"
+            useGeneratedKeys="true" keyProperty="id">
+        insert into permissions(permission, perms, description)
+        value (#{permission}, #{perms}, #{description});
     </insert>
 
     <update id="update" parameterType="com.crayon.pojo.user_manage.Permission">
@@ -32,7 +45,12 @@
         where id = #{id};
     </update>
 
-    <delete id="delete" parameterType="Integer">
+    <delete id="deleteById" parameterType="Integer">
+        delete from permissions
+        where id = #{id}
+    </delete>
+
+    <delete id="deleteByKey" parameterType="Integer">
         delete from permissions
         where id = #{id}
     </delete>
