@@ -51,10 +51,20 @@
 
   <servlet-mapping>
     <servlet-name>dispatcherServlet</servlet-name>
-    <!-- *.do 表示我们请求映射路径后缀为.do，  我们也可以设置为/ -->
+    <!-- 设置请求映射路径后缀为.do-->
     <url-pattern>*.do</url-pattern>
   </servlet-mapping>
 
+  <!-- 打开springMVC静态资源拦截器，不拦截swagger下的资源 -->
+  <servlet-mapping>
+    <servlet-name>default</servlet-name>
+    <url-pattern>/swagger/*</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>default</servlet-name>
+    <url-pattern>/API/*</url-pattern>
+  </servlet-mapping>
   <filter>
     <filter-name>shiroFilter</filter-name>
     <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
@@ -66,6 +76,36 @@
   </filter>
   <filter-mapping>
     <filter-name>shiroFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+
+  <!--  提供跨域支持 -->
+  <filter>
+    <filter-name>CORS</filter-name>
+    <filter-class>com.thetransactioncompany.cors.CORSFilter</filter-class>
+    <init-param>
+      <param-name>cors.allowOrigin</param-name>
+      <param-value>*</param-value>
+    </init-param>
+    <init-param>
+      <param-name>cors.supportedMethods</param-name>
+      <param-value>GET, POST, HEAD, PUT, DELETE</param-value>
+    </init-param>
+    <init-param>
+      <param-name>cors.supportedHeaders</param-name>
+      <param-value>Accept, Origin, X-Requested-With, Content-Type, Last-Modified</param-value>
+    </init-param>
+    <init-param>
+      <param-name>cors.exposedHeaders</param-name>
+      <param-value>Set-Cookie</param-value>
+    </init-param>
+    <init-param>
+      <param-name>cors.supportsCredentials</param-name>
+      <param-value>true</param-value>
+    </init-param>
+  </filter>
+  <filter-mapping>
+    <filter-name>CORS</filter-name>
     <url-pattern>/*</url-pattern>
   </filter-mapping>
 
