@@ -31,8 +31,8 @@ public class UserRealm extends AuthorizingRealm {
         authorizationInfo.setStringPermissions(usersService.findPermissions(username));
          */
         //注入用户权限
-        authorizationInfo.setRoles(userService.getRoles(username));
-        authorizationInfo.setStringPermissions(userService.getPermissions(username));
+        authorizationInfo.setRoles(userService.getRolesByUserName(username));
+        authorizationInfo.setStringPermissions(userService.getPermissionsByUserName(username));
         return authorizationInfo;
     }
 
@@ -50,7 +50,7 @@ public class UserRealm extends AuthorizingRealm {
 
         String username = (String) token.getPrincipal();
 
-        User user = userService.findByName(username).get(0);
+        User user = userService.getUserByName(username);
 
         if (user == null) {
             throw new UnknownAccountException(); //没有找到账号

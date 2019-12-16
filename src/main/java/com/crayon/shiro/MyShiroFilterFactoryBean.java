@@ -1,6 +1,7 @@
 package com.crayon.shiro;
 
 import com.crayon.pojo.user_manage.Permission;
+import com.crayon.service.BaseService;
 import com.crayon.service.impl.user_manage.PermissionServiceImpl;
 import org.apache.shiro.config.Ini;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
@@ -27,7 +28,7 @@ public class MyShiroFilterFactoryBean  extends ShiroFilterFactoryBean {
 
         MyShiroFilterFactoryBean.definitions = definitions;
 
-        List<Permission> permissions = permissionService.findAll();
+        List<Permission> permissions = permissionService.listAllDOs();
         definitions = "/static/** = anon\n" +
                 "/swagger/** = anon\n" +
                 "/css/** = anon\n" +
