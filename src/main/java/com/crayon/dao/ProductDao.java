@@ -37,6 +37,7 @@ public interface ProductDao {
     Integer getProductSales(@Param("proId") Integer proId,
                             @Param("ordStatus") Integer ordStatus) throws Exception;
 
+
     void insert(Product Product) throws Exception;
     void update(Product Product) throws Exception;
     void deleteById(Integer ProductId) throws Exception;
