@@ -4,14 +4,14 @@ import java.io.Serializable;
 
 public class Description implements Serializable {
     private Integer desId;
-    private Integer type;
+    private String type;
     private String category;
     private String desHead;
     private String desBody;
 
     public Description(){}
     public Description(Integer desId,
-                       Integer type,
+                       String type,
                        String category,
                        String desHead,
                        String desBody){
@@ -26,7 +26,7 @@ public class Description implements Serializable {
 
     }
 
-    public void setType(Integer type) {
+    public void setType(String type) {
         this.type = type;
     }
 
@@ -46,7 +46,7 @@ public class Description implements Serializable {
         return desId;
     }
 
-    public Integer getType() {
+    public String getType() {
         return type;
     }
 
