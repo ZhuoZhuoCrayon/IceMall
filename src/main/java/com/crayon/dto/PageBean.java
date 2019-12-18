@@ -3,13 +3,29 @@ package com.crayon.dto;
 import java.util.List;
 
 public class PageBean<T> {
-    private Integer currPage;
+    private Integer currentPage;
     private Integer pageSize;
     private Integer totalPage;
     private List<T> itemList;
 
-    public void setCurrPage(Integer currPage) {
-        this.currPage = currPage;
+    /**
+     * 根据item数量及当前页索引，初始化PageBean
+     * @param itemNum
+     * @param pageSize
+     * @param currentPage
+     * @return 返回页开始索引
+     */
+    public int initPageBean(int itemNum,int pageSize,int currentPage ){
+        this.totalPage = (int) Math.ceil((itemNum*1.0)/pageSize);
+        this.currentPage = currentPage;
+        this.pageSize = (currentPage == totalPage && itemNum%pageSize != 0)?
+                (itemNum%pageSize):pageSize;
+
+        int start = pageSize*(this.currentPage-1);
+        return start;
+    }
+    public void setCurrentPage(Integer currPage) {
+        this.currentPage = currPage;
     }
 
     public void setItemList(List<T> itemList) {
@@ -24,8 +40,8 @@ public class PageBean<T> {
         this.totalPage = totalPage;
     }
 
-    public Integer getCurrPage() {
-        return currPage;
+    public Integer getCurrentPage() {
+        return currentPage;
     }
 
     public Integer getPageSize() {
