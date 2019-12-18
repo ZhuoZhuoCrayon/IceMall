@@ -1,39 +1,49 @@
 package com.crayon.dto;
 
+import com.crayon.pojo.Product;
+
 import java.io.Serializable;
 import java.util.HashMap;
 
 public class ProductSimple implements Serializable {
     private Integer proId;
+    private String proName;
     private String productionBatch;
-    private String proPrice;
+    private Float proPrice;
     private Integer proQuantity;                    //库存
     private String proStatus;                       //商品状态
     private Integer sales;                          //销量
     private String proImgUrl;                       //预览图片
-    private String preCondition;                    //优惠方式
-    private String preCDescribe;                    //优惠描述
-    private HashMap<String,Float> preferenceCal;    //优惠计算参数
+    private PreferentialMethod preferentialMethod;
 
     public ProductSimple(){}
+    public void copyByProduct(Product product){
+        this.proId = product.getProId();
+        this.proName = product.getProName();
+        this.productionBatch = product.getProductionBatch();
+        this.proPrice = product.getProPrice();
+        this.proQuantity = product.getProQuantity();
+        this.proStatus = product.getProStatus();
+    }
     public void setProId(Integer proId) {
         this.proId = proId;
     }
 
 
+    public void setProName(String proName) {
+        this.proName = proName;
+    }
+
     public void setProStatus(String proStatus) {
         this.proStatus = proStatus;
     }
 
-    public void setPreCDescribe(String preCDescribe) {
-        this.preCDescribe = preCDescribe;
-    }
 
     public void setProductionBatch(String productionBatch) {
         this.productionBatch = productionBatch;
     }
 
-    public void setProPrice(String proPrice) {
+    public void setProPrice(Float proPrice) {
         this.proPrice = proPrice;
     }
 
@@ -49,12 +59,9 @@ public class ProductSimple implements Serializable {
         this.proImgUrl = proImgUrl;
     }
 
-    public void setPreCondition(String preCondition) {
-        this.preCondition = preCondition;
-    }
 
-    public void setPreferenceCal(HashMap<String, Float> preferenceCal) {
-        this.preferenceCal = preferenceCal;
+    public void setPreferentialMethod(PreferentialMethod preferentialMethod) {
+        this.preferentialMethod = preferentialMethod;
     }
 
     public Integer getProId() {
@@ -73,19 +80,12 @@ public class ProductSimple implements Serializable {
         return sales;
     }
 
-    public HashMap<String, Float> getPreferenceCal() {
-        return preferenceCal;
-    }
-
-    public String getPreCondition() {
-        return preCondition;
-    }
 
     public String getProImgUrl() {
         return proImgUrl;
     }
 
-    public String getProPrice() {
+    public Float getProPrice() {
         return proPrice;
     }
 
@@ -93,7 +93,12 @@ public class ProductSimple implements Serializable {
         return proStatus;
     }
 
-    public String getPreCDescribe() {
-        return preCDescribe;
+
+    public String getProName() {
+        return proName;
+    }
+
+    public PreferentialMethod getPreferentialMethod() {
+        return preferentialMethod;
     }
 }
