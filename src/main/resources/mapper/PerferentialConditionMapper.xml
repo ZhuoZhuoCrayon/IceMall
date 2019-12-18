@@ -29,6 +29,14 @@
         where pc.preConId = #{preConId};
     </select>
 
+    <!-- 根据产品Id查询优惠-->
+    <select id="getPreferentialConditionByProId" parameterType="Integer"
+            resultType="com.crayon.pojo.PreferentialCondition">
+        select preConId, preCondition, preCDescribe, preDiscount, preCLimit, preCReduceAmount from preferentialcondition pc
+        join product p on pc.preConId = p.preferentialConditionId
+        where p.proId = #{proId};
+    </select>
+
 
     <insert id="insert" parameterType="com.crayon.pojo.PreferentialCondition"
             useGeneratedKeys="true" keyProperty="preConId">
@@ -53,19 +61,19 @@
                 preCLimit = #{preCLimit},
             </if>
             <if test="preCReduceAmount!=null">
-                rpreCReduceAmount = #{preCReduceAmount},
+                preCReduceAmount = #{preCReduceAmount},
             </if>
         </set>
         where preConId = #{preConId};
     </update>
 
     <delete id="deleteById" parameterType="Integer">
-        delete from preferentialcondition pc
-        where pc.preConId = #{preConId};
+        delete from preferentialcondition
+        where preConId = #{preConId};
     </delete>
 
     <delete id="deleteByKey" parameterType="Integer">
-        delete from preferentialcondition pc
-        where pc.preConId = #{preConId};
+        delete from preferentialcondition
+        where preConId = #{preConId};
     </delete>
 </mapper>

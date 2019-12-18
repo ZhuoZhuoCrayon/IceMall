@@ -25,6 +25,7 @@
     <mvc:annotation-driven/>
     <!-- 静态资源文件，不会被Spring MVC拦截 -->
     <mvc:resources mapping="/swagger/**" location="/swagger/" />
+    <mvc:resources mapping="/static/" location="/static/" />
     <!-- 不拦截测试接口 -->
     <mvc:resources mapping="/API/**" location="/API/" />
 
@@ -39,6 +40,13 @@
     <!-- 控制器异常处理，用来处理权限、角色验证失败出现的UnauthorizedException异常 -->
     <bean id="exceptionHandlerExceptionResolver"
           class="org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver">
+    </bean>
+
+    <!-- 文件上传,id必须设置为multipartResolver -->
+    <bean id="multipartResolver"
+          class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <!-- 设置文件上传大小 -->
+        <property name="maxUploadSize" value="5000000" />
     </bean>
 
 </beans>

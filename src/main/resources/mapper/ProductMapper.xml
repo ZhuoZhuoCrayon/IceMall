@@ -41,7 +41,7 @@
     </select>
 
     <!-- 根据产品Id查询-->
-    <select id="getProductByKey" parameterType="String"
+    <select id="getProductByKey" parameterType="Integer"
             resultType="com.crayon.pojo.Product">
         SELECT * FROM product pro
         where pro.proId = #{proId};

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.crayon.dao.DescriptionDao">
+    <resultMap id="DescriptionMap" type="com.crayon.pojo.Description">
+        <id property="desId" column="desId"/>
+        <result property="type" column="type"/>
+        <result property="category" column="category"/>
+        <result property="desHead" column="desHead"/>
+        <result property="desBody" column="desBody"/>
+    </resultMap>
+    <select id="countDescriptions" resultType="Integer">
+        select count(*)
+        from description;
+    </select>
+
+    <select id="listAllDescriptions" resultType="com.crayon.pojo.Description">
+        select * from description;
+    </select>
+
+
+    <select id="listDescriptionsById" parameterType="Integer" resultType="com.crayon.pojo.Description">
+        select * from description
+        where desId = #{desId};
+    </select>
+
+    <select id="listProductEvaluationsByProId" parameterType="Integer"
+            resultType="com.crayon.dto.UserEvaluation">
+        select
+        (select users.userName from users where users.userId = pv.userId) as userName,
+        pv.proId,pv.level,pv.evaDate,d.desHead,d.desBody
+        from proevaluation pv
+        join description d on pv.desId = d.desId
+        where pv.proId = #{proId};
+    </select>
+
+    <!--根据根据商品Id及描述type、描述分类获取描述内容序列-->
+    <select id="listProductDescriptionsByFilter"
+            resultType="com.crayon.pojo.Description">
+        select des.desId, des.type, des.category, des.desHead, des.desBody from description des
+        join prodescribe pd on des.desId = pd.desId
+        where pd.proId = #{proId} and
+              des.type = #{type} and
+              des.category = #{category};
+    </select>
+
+
+    <select id="getDescriptionByKey" parameterType="Integer"
+            resultType="com.crayon.pojo.Description">
+        SELECT * FROM description
+        where desId = #{desId};
+    </select>
+
+    <select id="linkToProduct">
+        insert into prodescribe(proId, desId) values
+        (#{proId},#{desId});
+    </select>
+
+    <insert id="insert" parameterType="com.crayon.pojo.Description"
+            useGeneratedKeys="true" keyProperty="desId">
+        insert into description(type, category, desHead, desBody)
+        value (#{type}, #{category}, #{desHead}, #{desBody});
+    </insert>
+
+    <update id="update" parameterType="com.crayon.pojo.Description">
+        update description des
+        <set>
+            <if test="type!=null">
+                des.type = #{type},
+            </if>
+            <if test="category!=null">
+                category = #{category},
+            </if>
+            <if test="desHead!=null">
+                desHead = #{desHead},
+            </if>
+            <if test="desBody!=null">
+                desBody = #{desBody},
+            </if>
+        </set>
+        where desId = #{desId};
+    </update>
+
+    <delete id="deleteById" parameterType="Integer">
+        delete from description
+        where desId = #{desId};
+    </delete>
+
+    <delete id="deleteByKey" parameterType="Integer">
+        delete from description
+        where desId = #{desId};
+    </delete>
+</mapper>
