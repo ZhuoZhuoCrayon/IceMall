@@ -11,6 +11,7 @@ import com.crayon.pojo.user_manage.Customer;
 import com.crayon.pojo.user_manage.User;
 import com.crayon.service.Helper.PasswordHelper;
 import com.crayon.service.UserService;
+import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
@@ -70,6 +71,13 @@ public class UserServiceImpl implements UserService {
             e.printStackTrace();
             return null;
         }
+    }
+
+    @Override
+    public User getCurrentUser(){
+        //获取连接状态用户名
+        String userName = (String) SecurityUtils.getSubject().getPrincipal();
+        return getUserByName(userName);
     }
 
 
@@ -152,15 +160,6 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    @Override
-    public Set<String> getRoleDesByUserName(String userName) {
-        try{
-            return userDao.getRoleDesByUserName(userName);
-        }catch (Exception e){
-            e.printStackTrace();
-            return new TreeSet<>();
-        }
-    }
 
     @Override
     public Set<String> getPermissionsByUserName(String userName) {

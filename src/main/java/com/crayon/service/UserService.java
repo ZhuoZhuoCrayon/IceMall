@@ -22,19 +22,18 @@ public interface UserService extends BaseService<User>{
     Set<String> getRolesByUserName(String userName);
 
     /**
-     * 根据用户名获取身份描述
-     * @param userName
-     * @return
-     */
-    Set<String> getRoleDesByUserName(String userName);
-    /**
      * 获取用户权限
      * @param userName
      * @return
      */
-    Set<String>getPermissionsByUserName(String userName);
+    Set<String> getPermissionsByUserName(String userName);
 
 
+    /**
+     * 获取当前登录用户
+     * @return
+     */
+    User getCurrentUser();
     /**
      * 获取用户登录信息
      * @param userName
