@@ -178,6 +178,9 @@ CREATE TABLE ProductList
     purQuantity  integer,
     proTotPrice  float,
     proUnitPrice float,
+    favorableTotPrice float,    # 优惠后总价：单品优惠+用户折扣
+    proReduce   float,          # 商品优惠金额
+    userReduce  float,          # 用户折扣
     PRIMARY KEY (proListId),
     FOREIGN KEY (proId) REFERENCES Product (proId)
 ) ENGINE = InnoDB
@@ -344,6 +347,7 @@ VALUES
 ('TEXT','DESCRIBE',null,'特性:精品葡萄酒 甜度:甜型 葡萄品种:长相思（Sauvignon Blanc）保质期:10年 酒精度:11%vol 存储方法:避光恒温 产品重量:1.7kg 容量500ml'),
 ('TEXT','DESCRIBE',null,'特性:精品葡萄酒 甜度:甜型 保质期:10年 酒精度:11%vol 存储方法:避光恒温 产品重量:1.7kg 容量500ml'),
 
+
 #预览图
 ('IMG','PREVIEW',null,'/static/img/preview/p1.jpg'),
 ('IMG','PREVIEW',null,'/static/img/preview/p2.jpg'),
@@ -462,41 +466,325 @@ VALUES
 ('IMG','DETAIL_DESCRIBE',null,'/static/img/detail/64.jpg'),
 ('IMG','DETAIL_DESCRIBE',null,'/static/img/detail/65.png'),
 ('IMG','DETAIL_DESCRIBE',null,'/static/img/detail/66.png'),
-('IMG','DETAIL_DESCRIBE',null,'/static/img/detail/67.jpg');
+('IMG','DETAIL_DESCRIBE',null,'/static/img/detail/67.jpg'),
+
+# 描述
+('TEXT','DESCRIBE','特性','精品葡萄酒'),
+('TEXT','DESCRIBE','甜度','甜型'),
+('TEXT','DESCRIBE','果种','丹麦进口'),
+('TEXT','DESCRIBE','存储方法','低于常温'),
+('TEXT','DESCRIBE','产品重量','1.7kg'),
+('TEXT','DESCRIBE','酒精度','12%vol'),
+('TEXT','DESCRIBE','容量','750ml'),
+
+('TEXT','DESCRIBE','特性','特级葡萄酒'),
+('TEXT','DESCRIBE','甜度','微甜型'),
+('TEXT','DESCRIBE','果种','源自中国云南'),
+('TEXT','DESCRIBE','存储方法','常温避光'),
+('TEXT','DESCRIBE','产品重量','1.1kg'),
+('TEXT','DESCRIBE','酒精度','13%vol'),
+('TEXT','DESCRIBE','容量','500ml'),
+
+('TEXT','DESCRIBE','特性','中级葡萄酒'),
+('TEXT','DESCRIBE','甜度','回甘型'),
+('TEXT','DESCRIBE','果种','荷兰进口'),
+('TEXT','DESCRIBE','存储方法','冷藏'),
+('TEXT','DESCRIBE','产品重量','1.0kg'),
+('TEXT','DESCRIBE','酒精度','20%vol'),
+('TEXT','DESCRIBE','容量','700ml'),
+
+('TEXT','DESCRIBE','特性','高级葡萄酒'),
+('TEXT','DESCRIBE','甜度','超甜型'),
+('TEXT','DESCRIBE','果种','英产巨峰'),
+('TEXT','DESCRIBE','存储方法','常温避光'),
+('TEXT','DESCRIBE','产品重量','1.1kg'),
+('TEXT','DESCRIBE','酒精度','100%vol'),
+('TEXT','DESCRIBE','容量','1500ml'),
+
+('TEXT','DESCRIBE','特性','中端葡萄酒'),
+('TEXT','DESCRIBE','甜度','巨甜型'),
+('TEXT','DESCRIBE','果种','优质平原苹果'),
+('TEXT','DESCRIBE','存储方法','常温避光'),
+('TEXT','DESCRIBE','产品重量','1.5kg'),
+('TEXT','DESCRIBE','酒精度','11%vol'),
+('TEXT','DESCRIBE','容量','999ml'),
 
 
+# 浏览页描述
+('TEXT','PREVIEW_DESCRIBE',null,'澳洲原瓶进口红酒奔富洛神山庄赤霞珠'),
+('TEXT','PREVIEW_DESCRIBE',null,'奔富蔻/寇兰山设拉子赤霞珠干红葡萄酒'),
+('TEXT','PREVIEW_DESCRIBE',null,'圣芝红酒法国波尔多AOC银奖干红原瓶'),
+('TEXT','PREVIEW_DESCRIBE',null,'Lafite拉菲传奇波尔多冰酒'),
+('TEXT','PREVIEW_DESCRIBE',null,'杰卡斯经典梅洛西拉冰酒'),
+('TEXT','PREVIEW_DESCRIBE',null,'法国原瓶原装进口冰酒2支装 法尔干红'),
+('TEXT','PREVIEW_DESCRIBE',null,'新地达 威龙有机干冰酒 优级酒田'),
+('TEXT','PREVIEW_DESCRIBE',null,'智利进口冰酒酒'),
+('TEXT','PREVIEW_DESCRIBE',null,'火烈鸟原瓶原装干红冰酒'),
+('TEXT','PREVIEW_DESCRIBE',null,'张裕官方黄金冰谷冰酒酒庄金钻威代尔'),
+('TEXT','PREVIEW_DESCRIBE',null,'慕拉冰酒2支装起泡酒甜酒水果酒冰白'),
+('TEXT','PREVIEW_DESCRIBE',null,'莫高冰酒冰葡萄酒甜红酒正品荣远冰红'),
+('TEXT','PREVIEW_DESCRIBE',null,'吉林通化葡萄酒冰酒集安北冰红冰葡萄'),
+('TEXT','PREVIEW_DESCRIBE',null,'慕拉起泡酒甜酒白葡萄酒少女甜型气泡'),
+('TEXT','PREVIEW_DESCRIBE',null,'辉煌Gloria加拿大冰酒庄园进口晚收红'),
+('TEXT','PREVIEW_DESCRIBE',null,'云惜加拿大冰酒icewine原瓶进口晚收甜'),
+('TEXT','PREVIEW_DESCRIBE',null,'红酒冰山葡萄酒晚收甜酒甜'),
+('TEXT','PREVIEW_DESCRIBE',null,'维科尼娅冰酒贵腐约会红酒甜型葡萄酒'),
+('TEXT','PREVIEW_DESCRIBE',null,'富隆红酒进口冰酒德国维特思蓝冰王甜'),
+('TEXT','PREVIEW_DESCRIBE',null,'德国莱茵黑森产区冰酒Icewine Eiswein'),
+('TEXT','PREVIEW_DESCRIBE',null,'华龙北冰红山葡萄酒原汁小支红酒通化'),
+('TEXT','PREVIEW_DESCRIBE',null,'Dynasty王朝 5度纪念日低醇白起泡葡'),
+('TEXT','PREVIEW_DESCRIBE',null,'集安北冰红冰葡萄酒甜红酒果酒低度女'),
+('TEXT','PREVIEW_DESCRIBE',null,'原瓶原装进口 雪诗尼 加拿大威代尔冰'),
+('TEXT','PREVIEW_DESCRIBE',null,'通化葡萄酒 菀妍冰酒(冰白）11.5度 37'),
+('TEXT','PREVIEW_DESCRIBE',null,'德国进口冰酒 钻石冰白/冰红/金冰白 甜'),
+('TEXT','PREVIEW_DESCRIBE',null,'卡诗图冰酒6支装冰白葡萄酒甜型红酒'),
+('TEXT','PREVIEW_DESCRIBE',null,'6支礼盒装 冰酒甜白女士香槟起泡葡萄'),
+('TEXT','PREVIEW_DESCRIBE',null,'莫高红酒长相守冰酒冰红冰白冰葡萄酒'),
+('TEXT','PREVIEW_DESCRIBE',null,'凯特岭加拿大冰酒原瓶进口白兰地利口');
 
-INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (1,41);
-INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (2,41);
-INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (3,43);
-INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (4,42);
-INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (5,42);
-INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (6,41);
-INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (7,40);
-INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (8,41);
-INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (9,41);
-INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (10,42);
-INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (11,40);
-INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (12,41);
-INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (13,41);
-INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (14,41);
-INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (15,42);
-INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (16,43);
-INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (17,41);
-INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (18,42);
-INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (19,41);
-INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (20,43);
-INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (21,42);
-INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (22,43);
-INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (23,41);
-INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (24,43);
-INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (25,41);
-INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (26,40);
-INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (27,44);
-INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (28,41);
-INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (29,42);
-INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (30,41);
 
+# 添加商品描述
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (1,161);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (1,162);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (1,163);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (1,164);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (1,165);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (1,166);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (1,167);
+
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (2,168);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (2,169);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (2,170);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (2,171);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (2,172);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (2,173);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (2,174);
+
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (3,175);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (3,176);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (3,177);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (3,178);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (3,179);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (3,180);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (3,181);
+
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (4,182);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (4,183);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (4,184);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (4,185);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (4,186);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (4,187);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (4,188);
+
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (5,189);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (5,190);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (5,191);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (5,192);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (5,193);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (5,194);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (5,195);
+
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (6,161);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (6,162);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (6,163);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (6,164);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (6,165);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (6,166);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (6,167);
+
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (7,168);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (7,169);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (7,170);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (7,171);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (7,172);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (7,173);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (7,174);
+
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (8,175);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (8,176);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (8,177);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (8,178);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (8,179);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (8,180);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (8,181);
+
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (9,182);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (9,183);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (9,184);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (9,185);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (9,186);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (9,187);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (9,188);
+
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (10,189);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (10,190);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (10,191);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (10,192);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (10,193);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (10,194);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (10,195);
+
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (11,161);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (11,162);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (11,163);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (11,164);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (11,165);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (11,166);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (11,167);
+
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (12,168);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (12,169);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (12,170);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (12,171);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (12,172);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (12,173);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (12,174);
+
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (13,175);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (13,176);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (13,177);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (13,178);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (13,179);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (13,180);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (13,181);
+
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (14,182);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (14,183);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (14,184);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (14,185);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (14,186);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (14,187);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (14,188);
+
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (15,189);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (15,190);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (15,191);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (15,192);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (15,193);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (15,194);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (15,195);
+
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (16,161);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (16,162);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (16,163);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (16,164);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (16,165);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (16,166);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (16,167);
+
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (17,168);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (17,169);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (17,170);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (17,171);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (17,172);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (17,173);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (17,174);
+
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (18,175);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (18,176);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (18,177);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (18,178);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (18,179);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (18,180);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (18,181);
+
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (19,182);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (19,183);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (19,184);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (19,185);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (19,186);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (19,187);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (19,188);
+
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (20,189);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (20,190);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (20,191);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (20,192);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (20,193);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (20,194);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (20,195);
+
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (21,161);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (21,162);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (21,163);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (21,164);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (21,165);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (21,166);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (21,167);
+
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (22,168);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (22,169);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (22,170);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (22,171);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (22,172);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (22,173);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (22,174);
+
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (23,175);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (23,176);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (23,177);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (23,178);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (23,179);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (23,180);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (23,181);
+
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (24,182);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (24,183);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (24,184);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (24,185);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (24,186);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (24,187);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (24,188);
+
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (25,189);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (25,190);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (25,191);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (25,192);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (25,193);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (25,194);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (25,195);
+
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (26,161);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (26,162);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (26,163);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (26,164);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (26,165);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (26,166);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (26,167);
+
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (27,168);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (27,169);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (27,170);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (27,171);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (27,172);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (27,173);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (27,174);
+
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (28,175);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (28,176);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (28,177);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (28,178);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (28,179);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (28,180);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (28,181);
+
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (29,182);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (29,183);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (29,184);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (29,185);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (29,186);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (29,187);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (29,188);
+
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (30,189);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (30,190);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (30,191);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (30,192);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (30,193);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (30,194);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (30,195);
+
+# 插入预览图片
 INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (1,44);
 INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (2,45);
 INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (3,46);
@@ -537,6 +825,98 @@ INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (37,90);
 INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (38,91);
 INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (39,92);
 INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (40,93);
+
+# 插入描述图片
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (1,94);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (1,95);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (1,96);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (2,97);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (2,98);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (2,99);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (3,100);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (3,101);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (3,102);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (4,103);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (4,104);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (4,105);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (5,106);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (5,107);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (5,108);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (6,109);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (6,110);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (6,111);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (7,112);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (7,113);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (7,114);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (8,115);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (8,116);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (8,144);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (9,117);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (9,118);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (9,119);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (10,120);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (10,121);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (10,122);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (11,123);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (11,124);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (11,125);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (12,126);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (12,127);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (12,128);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (13,129);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (13,130);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (13,131);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (14,132);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (14,133);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (14,134);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (15,135);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (15,136);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (15,137);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (16,138);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (16,139);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (16,140);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (17,141);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (17,142);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (17,143);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (18,144);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (18,145);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (18,146);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (19,147);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (19,148);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (19,149);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (20,120);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (20,121);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (20,122);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (21,94);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (21,95);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (21,96);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (22,97);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (22,98);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (22,99);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (23,100);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (23,101);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (23,102);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (24,103);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (24,104);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (24,121);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (25,141);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (25,107);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (25,140);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (26,109);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (26,110);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (26,111);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (27,112);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (27,150);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (27,151);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (28,152);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (28,153);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (28,154);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (29,155);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (29,156);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (29,157);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (30,158);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (30,159);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (30,160);
 
 
 # 1满减 2优惠折扣 3 满额折扣
@@ -627,27 +1007,29 @@ insert into CusFavorite(userId, proId) values
 (8,2),(8,15),(8,13),(8,14),(9,22),(9,11),(9,15);
 
 
-insert into ProductList(proId, purQuantity, proTotPrice, proUnitPrice) VALUES
-(1,2,296,148),
-(2,2,398,199),
-(4,2,798,399),
-(5,1,458,458),
-(6,2,598,299),
-(7,3,507,169),
-(9,2,796,398),
-(10,2,916,458),
-(11,1,398,398),
-(12,2,1198,599),
-(13,2,596,298),
-(14,2,796,398),
-(16,2,296,148),
-(19,1,288,288),
-(21,1,298,298),
-(22,2,1096,548),
-(25,1,148,148),
-(26,2,296,148),
-(27,2,296,148),
-(30,2,296,148);
+insert into ProductList(proId, purQuantity,
+                        proTotPrice, proUnitPrice, favorableTotPrice,
+                        proReduce, userReduce) VALUES
+(1,2,296,148,296,0,0),
+(2,2,398,199,398,0,0),
+(4,2,798,399,798,0,0),
+(5,1,458,458,458,0,0),
+(6,2,598,299,598,0,0),
+(7,3,507,169,507,0,0),
+(9,2,796,398,796,0,0),
+(10,2,916,458,916,0,0),
+(11,1,398,398,398,0,0),
+(12,2,1198,599,1198,0,0),
+(13,2,596,298,596,0,0),
+(14,2,796,398,796,0,0),
+(16,2,296,148,296,0,0),
+(19,1,288,288,288,0,0),
+(21,1,298,298,298,0,0),
+(22,2,1096,548,1096,0,0),
+(25,1,148,148,148,0,0),
+(26,2,296,148,296,0,0),
+(27,2,296,148,296,0,0),
+(30,2,296,148,296,0,0);
 
 
 insert into shoppingcart(userId, proListId) VALUES
