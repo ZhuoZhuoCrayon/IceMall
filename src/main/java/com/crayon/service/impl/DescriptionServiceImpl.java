@@ -208,10 +208,12 @@ public class DescriptionServiceImpl implements DescriptionService {
 
         //获取原文件名
         String oriName = productPreviewImg.getOriginalFilename();
+        // 设置图片名称，不能重复，可以使用uuid
+        String picName = UUID.randomUUID().toString();
         //获取后缀名
         String suffixName = oriName.substring(oriName.lastIndexOf("."));
         //组织文件名
-        String pictureStorePath = SystemConstant.PREVIEW_IMG_PATH + proId.toString() + suffixName;
+        String pictureStorePath = SystemConstant.PREVIEW_IMG_PATH + picName + suffixName;
         System.out.println(pictureStorePath);
         productPreviewImg.transferTo(new File(SystemConstant.STORE_PATH + pictureStorePath));
 
@@ -259,6 +261,57 @@ public class DescriptionServiceImpl implements DescriptionService {
         //关联描述与产品关系
         descriptionDao.linkToProduct(proId, description.getDesId());
         return new Result(true, "更新详细描述图片成功");
+    }
+
+
+    /**
+     * 插入商品概要描述
+     * @param proId
+     * @param description
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public Result insertProductPreviewDescribe(Integer proId,Description description) throws Exception{
+        //获取商品预览描述
+        List<Description> previewDescriptionList = descriptionDao.
+                listProductDescriptionsByFilter(
+                        proId,
+                        DescribeConstant.TEXT,
+                        DescribeConstant.PREVIEW_DESCRIBE);
+        //删除原有描述
+        for(Description des:previewDescriptionList){
+            descriptionDao.deleteProDescribeByDesId(des.getDesId());
+        }
+        //插入描述
+        this.insertDescriptionBySetting(
+                DescribeConstant.TEXT,DescribeConstant.PREVIEW_DESCRIBE,description);
+        //关联描述与商品的关系
+        descriptionDao.linkToProduct(proId,description.getDesId());
+        return new Result(true,"更新商品预览描述成功");
+    }
+
+    /**
+     * 插入商品详细描述
+     * @param proId
+     * @param description
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public Result insertProductDescribe(Integer proId,Description description) throws Exception{
+        //获取商品预览描述
+        List<Description> previewDescriptionList = descriptionDao.
+                listProductDescriptionsByFilter(
+                        proId,
+                        DescribeConstant.TEXT,
+                        DescribeConstant.DESCRIBE);
+        //插入描述
+        this.insertDescriptionBySetting(
+                DescribeConstant.TEXT,DescribeConstant.DESCRIBE,description);
+        //关联描述与商品的关系
+        descriptionDao.linkToProduct(proId,description.getDesId());
+        return new Result(true,"更新商品详细描述成功");
     }
 
     @Override

@@ -77,6 +77,7 @@ public class DescriptionController {
         try {
             return descriptionService.insertProductPreview(proId, productPreviewImg);
         }catch (Exception e){
+            e.printStackTrace();
             return new Result(false,"ERROR");
         }
     }
@@ -91,4 +92,31 @@ public class DescriptionController {
             return new Result(false,"ERROR");
         }
     }
+
+    @RequestMapping(value = "insertProductPreviewDescribe.do",method = RequestMethod.POST)
+    @ApiOperation("插入商品概要描述:覆盖原来")
+    public Result insertProductPreviewDescribe(Integer proId,String desHead,String desBody){
+        try {
+            Description description = new Description();
+            description.setDesBody(desBody);
+            description.setDesHead(desHead);
+            return descriptionService.insertProductPreviewDescribe(proId,description);
+        }catch (Exception e){
+            return new Result(false,"ERROR");
+        }
+    }
+
+    @RequestMapping(value = "insertProductDescribe.do",method = RequestMethod.POST)
+    @ApiOperation("插入商品详细描述")
+    public Result insertProductDescribe(Integer proId,String desHead,String desBody){
+        try {
+            Description description = new Description();
+            description.setDesBody(desBody);
+            description.setDesHead(desHead);
+            return descriptionService.insertProductDescribe(proId,description);
+        }catch (Exception e){
+            return new Result(false,"ERROR");
+        }
+    }
+
 }

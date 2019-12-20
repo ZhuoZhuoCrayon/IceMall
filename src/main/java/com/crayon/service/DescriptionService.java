@@ -74,4 +74,23 @@ public interface DescriptionService extends BaseService<Description> {
      */
     Result insertProductDescribeImg(Integer proId, MultipartFile describeImg) throws Exception;
 
+
+    /**
+     * 插入商品概要描述
+     * @param proId
+     * @param description
+     * @return
+     * @throws Exception
+     */
+    Result insertProductPreviewDescribe(Integer proId,Description description) throws Exception;
+
+    /**
+     * 插入商品详细描述
+     * @param proId
+     * @param description
+     * @return
+     * @throws Exception
+     */
+    Result insertProductDescribe(Integer proId,Description description) throws Exception;
+
 }
