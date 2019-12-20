@@ -30,6 +30,11 @@ public interface UserService extends BaseService<User>{
 
 
     /**
+     * 获取当前登录用户的折扣
+     * @return
+     */
+    Float getCurrentUserDiscount() throws Exception;
+    /**
      * 获取当前登录用户
      * @return
      */

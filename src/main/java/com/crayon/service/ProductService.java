@@ -3,7 +3,9 @@ package com.crayon.service;
 import com.crayon.dto.PageBean;
 import com.crayon.dto.ProductDetail;
 import com.crayon.dto.ProductSimple;
+import com.crayon.dto.Result;
 import com.crayon.pojo.Product;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -45,6 +47,7 @@ public interface ProductService extends BaseService<Product> {
      * @throws Exception
      */
     PageBean<ProductDetail> listProductDetailsByPage(int currentPage, int pageSize);
+
 
     /**
      * 根据商品id获取销量

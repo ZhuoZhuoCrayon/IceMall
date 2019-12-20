@@ -37,4 +37,12 @@ public interface PreferentialConditionService extends BaseService<PreferentialCo
      * @return
      */
     PreferentialMethod getPreferentialMethodByProId(Integer proId);
+
+    /**
+     * 根据折扣计算出订单单元的折扣价
+     * @param proId
+     * @param purQuantity
+     * @return
+     */
+    Float getPriceAfterPrefer(Integer proId,Integer purQuantity) throws Exception;
 }

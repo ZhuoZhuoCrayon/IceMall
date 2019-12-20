@@ -12,6 +12,12 @@ public interface DescriptionService extends BaseService<Description> {
 
 
     /**
+     * 根据商品Id获取商品描述图片
+     * @param proId
+     * @return
+     */
+    List<String> listProductDescribeImgsByProId(Integer proId);
+    /**
      * 根据产品Id获取商品评价
      * @param proId
      * @return
@@ -43,7 +49,7 @@ public interface DescriptionService extends BaseService<Description> {
      * @param evaluation
      * @return
      */
-    Result insertEvaluation(Evaluation evaluation);
+    Result insertEvaluation(Evaluation evaluation) throws Exception;
 
     /**
      * 插入商品预览图片
@@ -51,14 +57,14 @@ public interface DescriptionService extends BaseService<Description> {
      * @param productPreviewImg
      * @return
      */
-    Result insertProductPreview(Integer proId, MultipartFile productPreviewImg);
+    Result insertProductPreview(Integer proId, MultipartFile productPreviewImg) throws Exception;
 
     /**
      * 插入商品详细图片
      * @param proId
-     * @param describeImgs
+     * @param describeImg
      * @return
      */
-    Result insertProductDescribeImgs(Integer proId, List<MultipartFile> describeImgs);
+    Result insertProductDescribeImg(Integer proId, MultipartFile describeImg) throws Exception;
 
 }
