@@ -29,6 +29,9 @@
             resultType="com.crayon.dto.UserEvaluation">
         select
         (select users.userName from users where users.userId = pv.userId) as userName,
+        (select cl.levelName from customer c
+        join cuslevel cl on c.cusLevelId = cl.cusLevelId
+        where c.userId = pv.userId) as levelName,
         pv.proId,pv.level,pv.evaDate,d.desHead,d.desBody
         from proevaluation pv
         join description d on pv.desId = d.desId
@@ -89,6 +92,11 @@
 
     <delete id="deleteByKey" parameterType="Integer">
         delete from description
+        where desId = #{desId};
+    </delete>
+
+    <delete id="deleteProDescribeByDesId" parameterType="Integer">
+        delete from prodescribe
         where desId = #{desId};
     </delete>
 </mapper>

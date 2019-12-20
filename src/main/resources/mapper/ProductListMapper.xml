@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.crayon.dao.ProductListDao">
+
+    <select id="countRoles" resultType="Integer">
+        select count(*)
+        from productlist;
+    </select>
+
+    <select id="listAllProductLists" resultType="com.crayon.pojo.ProductList">
+        select * from productlist;
+    </select>
+
+
+    <!--根据主码查询商品单元-->
+    <select id="getProductListByKey" parameterType="Integer"
+            resultType="com.crayon.pojo.ProductList">
+        SELECT * FROM productlist
+        where proListId = #{proListId};
+    </select>
+
+    <insert id="insert" parameterType="com.crayon.pojo.ProductList"
+            useGeneratedKeys="true" keyProperty="proListId">
+        insert into productlist(proId, purQuantity, proTotPrice, proUnitPrice, favorableTotPrice, proReduce, userReduce)
+        values (#{proId}, #{purQuantity}, #{proTotPrice}, #{proUnitPrice}, #{favorableTotPrice}, #{proReduce}, #{userReduce});
+    </insert>
+
+    <update id="update" parameterType="com.crayon.pojo.ProductList">
+        update productlist
+        <set>
+            <if test="proId!=null">
+                proId = #{proId},
+            </if>
+            <if test="purQuantity!=null">
+                purQuantity = #{purQuantity},
+            </if>
+            <if test="proTotPrice!=null">
+                proTotPrice = #{proTotPrice},
+            </if>
+            <if test="proUnitPrice!=null">
+                proUnitPrice = #{proUnitPrice},
+            </if>
+            <if test="favorableTotPrice!=null">
+                favorableTotPrice = #{favorableTotPrice},
+            </if>
+            <if test="proReduce!=null">
+                proReduce = #{proReduce},
+            </if>
+            <if test="userReduce!=null">
+                userReduce = #{userReduce},
+            </if>
+        </set>
+        where proListId = #{proListId};
+    </update>
+
+    <delete id="deleteByKey" parameterType="Integer">
+        delete from productlist
+        where proListId = #{proListId};
+    </delete>
+</mapper>

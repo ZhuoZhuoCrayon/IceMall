@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.crayon.dao.ShoppingCartDao">
+
+    <select id="countShoppingCarts" resultType="Integer">
+        select count(*)
+        from shoppingcart;
+    </select>
+
+    <select id="listAllShoppingCarts" resultType="com.crayon.pojo.ShoppingCart">
+        select * from shoppingcart;
+    </select>
+
+    <!--获取用户购物车-->
+    <select id="listUserShoppingCart" parameterType="Integer"
+            resultType="com.crayon.pojo.ProductList">
+        select pl.proListId, pl.proId, pl.purQuantity, pl.proTotPrice, pl.proUnitPrice from shoppingcart sc
+        join productlist pl on sc.proListId = pl.proListId
+        where sc.userId = #{userId};
+    </select>
+
+    <!--根据主码查询购物车单元-->
+    <select id="getShoppingCartByKey" parameterType="Integer"
+            resultType="com.crayon.pojo.ShoppingCart">
+        SELECT * FROM shoppingcart
+        where cartId = #{cartId};
+    </select>
+
+    <!--userId,proId 根据用户及商品获取该用户的商品单元-->
+    <select id="getProductListByProId" resultType="com.crayon.pojo.ProductList">
+        select * from shoppingcart sc
+        join productlist pl on sc.proListId = pl.proListId
+        where sc.userId = #{userId} and pl.proId = #{proId};
+    </select>
+
+    <!--插入购物车单元-->
+    <insert id="insert" parameterType="com.crayon.pojo.ShoppingCart"
+            useGeneratedKeys="true" keyProperty="cartId">
+        insert into shoppingcart(userId, proListId)
+        values (#{userId},#{proListId});
+    </insert>
+
+    <!--更新购物车单元-->
+    <update id="update" parameterType="com.crayon.pojo.ShoppingCart">
+        update shoppingcart
+        <set>
+            <if test="userId!=null">
+                userId = #{userId},
+            </if>
+            <if test="proListId!=null">
+                proListId = #{proListId},
+            </if>
+        </set>
+        where cartId = #{cartId};
+    </update>
+
+    <delete id="deleteByKey" parameterType="Integer">
+        delete from shoppingcart
+        where cartId = #{cartId};
+    </delete>
+
+    <!--清空客户购物车-->
+    <!--先删除productList相应的内容-->
+    <!--再删除购物车单元相应的内容-->
+    <delete id="clearShoppingCart" parameterType="Integer">
+        delete from productlist
+        where productlist.proListId = (
+            select sc.proListId from shoppingcart sc
+            where sc.userId = #{userId});
+
+        delete from shoppingcart
+        where shoppingcart.userId = #{userId};
+    </delete>
+</mapper>

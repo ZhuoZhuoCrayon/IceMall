@@ -67,6 +67,7 @@
                 #{proStatus});
     </insert>
 
+
     <update id="update" parameterType="com.crayon.pojo.Product">
         update product
         <set>

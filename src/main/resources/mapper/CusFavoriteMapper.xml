@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.crayon.dao.CusFavoriteDao">
+
+    <!--获取用户收藏-->
+    <select id="listFavoriteProducts" parameterType="Integer" resultType="Integer">
+        select proId from cusfavorite
+        where userId = #{userId};
+    </select>
+
+    <select id="checkExistByKey" resultType="Integer">
+        select count(*) from cusfavorite
+        where userId = #{userId} and proId = #{proId};
+    </select>
+
+    <!--添加用户收藏:dao层参数-->
+    <insert id="insertFavoriteProduct">
+        insert into cusfavorite(userId, proId)
+        values (#{userId},#{proId});
+    </insert>
+
+    <!--删除用户收藏:dao层参数-->
+    <delete id="deleteFavoriteProduct">
+        delete from cusfavorite
+        where userId = #{userId} and proId = #{proId};
+    </delete>
+
+</mapper>
