@@ -43,4 +43,5 @@ public interface DescriptionDao {
     void update(Description description) throws Exception;
     void deleteById(Integer desId) throws Exception;
     void deleteByKey(Integer desId) throws Exception;
+    void deleteProDescribeByDesId(Integer desId) throws Exception;
 }
