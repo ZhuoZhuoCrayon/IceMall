@@ -13,6 +13,7 @@ public class ProductSimple implements Serializable {
     private Integer proQuantity;                    //库存
     private String proStatus;                       //商品状态
     private Integer sales;                          //销量
+    private String previewDescribe;                 //预览描述
     private String proImgUrl;                       //预览图片
     private PreferentialMethod preferentialMethod;
 
@@ -53,6 +54,10 @@ public class ProductSimple implements Serializable {
 
     public void setSales(Integer sales) {
         this.sales = sales;
+    }
+
+    public void setPreviewDescribe(String previewDescribe) {
+        this.previewDescribe = previewDescribe;
     }
 
     public void setProImgUrl(String proImgUrl) {
@@ -100,5 +105,9 @@ public class ProductSimple implements Serializable {
 
     public PreferentialMethod getPreferentialMethod() {
         return preferentialMethod;
+    }
+
+    public String getPreviewDescribe() {
+        return previewDescribe;
     }
 }
