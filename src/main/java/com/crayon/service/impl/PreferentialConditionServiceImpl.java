@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 @Component
@@ -60,10 +61,13 @@ public class PreferentialConditionServiceImpl implements PreferentialConditionSe
     }
 
     @Override
-    public Result insert(PreferentialCondition PreferentialCondition) {
+    public Result insert(PreferentialCondition preferentialCondition) {
         try {
-            preferentialConditionDao.insert(PreferentialCondition);
-            return new Result(true,"插入优惠信息成功");
+            preferentialConditionDao.insert(preferentialCondition);
+            //返回优惠条件主码
+            HashMap<String,Object> plusParams = new HashMap<>();
+            plusParams.put("preConId",preferentialCondition.getPreConId());
+            return new Result(true,"插入优惠信息成功",plusParams);
         }catch (Exception e){
             e.printStackTrace();
             return new Result(false,"Error");
@@ -137,6 +141,11 @@ public class PreferentialConditionServiceImpl implements PreferentialConditionSe
         return preferentialParams;
     }
 
+    /**
+     * 根据优惠条件代码获取必填的优惠参数
+     * @param preCondition
+     * @return
+     */
     @Override
     public HashMap<String,String> getPreferentialParamsByPreCondition(Integer preCondition){
         HashMap<String,String> preferentialParams = new HashMap<>();
@@ -157,6 +166,11 @@ public class PreferentialConditionServiceImpl implements PreferentialConditionSe
         return preferentialParams;
     }
 
+    /**
+     * 根据产品Id获取产品优惠方式
+     * @param proId
+     * @return
+     */
     @Override
     public PreferentialMethod getPreferentialMethodByProId(Integer proId) {
         try {
@@ -165,12 +179,11 @@ public class PreferentialConditionServiceImpl implements PreferentialConditionSe
             PreferentialCondition preferentialCondition =
                     preferentialConditionDao.getPreferentialConditionByProId(proId);
             //设置优惠代码及优惠描述
-            preferentialMethod.setPreCondition(
-                    ProductConstant.PREFERENCES[preferentialCondition.getPreCondition()]);
+            preferentialMethod.setPreCondition(preferentialCondition.getPreCondition());
             preferentialMethod.setPreCDescribe(preferentialCondition.getPreCDescribe());
 
             //设置优惠参数
-            preferentialMethod.setPreferentialParams(getPreferentialParams(preferentialCondition));
+            preferentialMethod.setPreferentialParams(this.getPreferentialParams(preferentialCondition));
 
             return preferentialMethod;
         }catch (Exception e){
@@ -178,4 +191,40 @@ public class PreferentialConditionServiceImpl implements PreferentialConditionSe
             return null;
         }
     }
+    /**
+     * 根据折扣计算出订单单元的折扣价
+     * @param proId
+     * @param purQuantity
+     * @return
+     */
+    public Float getPriceAfterPrefer(Integer proId,Integer purQuantity) throws Exception{
+        float priceAfterPrefer = proId * purQuantity;
+        //获取优惠方式
+        PreferentialMethod preferentialMethod = this.getPreferentialMethodByProId(proId);
+        //获取优惠代码
+        int preCondition = preferentialMethod.getPreCondition();
+        //获取优惠参数
+        HashMap<String,Float> preferentialParams = preferentialMethod.getPreferentialParams();
+
+        switch (preCondition){
+            case ProductConstant.FULL_REDUCE:
+                //大于满减阈值，执行满减
+                if(priceAfterPrefer >= preferentialParams.get("preCLimit")){
+                    priceAfterPrefer -= preferentialParams.get("preCReduceAmount");
+                }
+                break;
+            case ProductConstant.PRICE_DISCOUNT:
+                priceAfterPrefer *= preferentialParams.get("preDiscount");
+                break;
+            case ProductConstant.FULL_DISCOUNT:
+                //大于折扣阈值，执行折扣
+                if(priceAfterPrefer >= preferentialParams.get("preCLimit")){
+                    priceAfterPrefer *= preferentialParams.get("preDiscount");
+                }
+                break;
+            default:break;
+        }
+        return priceAfterPrefer;
+    }
+
 }

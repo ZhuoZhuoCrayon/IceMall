@@ -80,6 +80,17 @@ public class UserServiceImpl implements UserService {
         return getUserByName(userName);
     }
 
+    /**
+     * 获取当前登录用户的折扣
+     * @return
+     */
+    @Override
+    public Float getCurrentUserDiscount() throws Exception{
+        //获取连接状态用户名
+        String userName = (String) SecurityUtils.getSubject().getPrincipal();
+        return userDao.getCusLevelByUserName(userName).getLevelDiscount();
+    }
+
 
     @Override
     public Result insert(User user) {
@@ -231,6 +242,7 @@ public class UserServiceImpl implements UserService {
             cusSimple.setLevelDiscount(cusLevel.getLevelDiscount());
             return cusSimple;
         }catch (Exception e){
+            e.printStackTrace();
             return new CusSimple();
         }
 

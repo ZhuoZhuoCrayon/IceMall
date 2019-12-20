@@ -10,6 +10,7 @@ import com.crayon.pojo.Description;
 import com.crayon.service.DescriptionService;
 import com.crayon.service.UserService;
 import com.crayon.setting.constant.DescribeConstant;
+import com.crayon.setting.constant.SystemConstant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
@@ -17,10 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+import java.io.File;
+import java.util.*;
 
 
 @Component
@@ -64,6 +63,32 @@ public class DescriptionServiceImpl implements DescriptionService {
         }
     }
 
+    /**
+     * 根据商品Id获取商品描述图片
+     * @param proId
+     * @return
+     */
+    @Override
+    public List<String> listProductDescribeImgsByProId(Integer proId){
+        try{
+            List<Description> descriptionList =  descriptionDao.listProductDescriptionsByFilter(
+                    proId,DescribeConstant.IMG,DescribeConstant.DETAIL_DESCRIBE);
+            List<String> describeImgs = new ArrayList<>();
+            for(Description description:descriptionList){
+                describeImgs.add(description.getDesBody());
+            }
+            return describeImgs;
+        }catch (Exception e){
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+    }
+
+    /**
+     * 根据产品Id获取商品评价
+     * @param proId
+     * @return
+     */
     @Override
     public List<UserEvaluation> listProductEvaluationsByProId(Integer proId) {
         try{
@@ -115,7 +140,7 @@ public class DescriptionServiceImpl implements DescriptionService {
     public Result insertDescriptionBySetting(String type, String category,Description description) {
         try{
             HashMap<String,Object> plusParams = new HashMap<>();
-            description.setCategory(type);
+            description.setType(type);
             description.setCategory(category);
             descriptionDao.insert(description);
             plusParams.put("desId",description.getDesId());
@@ -128,8 +153,7 @@ public class DescriptionServiceImpl implements DescriptionService {
 
     @Transactional(rollbackFor=Exception.class)
     @Override
-    public Result insertEvaluation(Evaluation evaluation) {
-        try{
+    public Result insertEvaluation(Evaluation evaluation) throws Exception{
             //插入描述
             Description description = new Description();
             description.setDesBody(evaluation.getDesBody());
@@ -147,22 +171,74 @@ public class DescriptionServiceImpl implements DescriptionService {
             proEvaluationDao.insert(proEvaluation);
 
             return new Result(true,"添加评论成功");
-        }catch (Exception e){
-            e.printStackTrace();
-            //出错则事务回滚
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            return new Result(false,"Error");
+    }
+
+    @Transactional(rollbackFor=Exception.class)
+    @Override
+    public Result insertProductPreview(Integer proId, MultipartFile productPreviewImg) throws Exception {
+        if (proId == null || this.getDOByKey(proId) == null) {
+            return new Result(false, "商品不存在！");
         }
+
+        //删除原本的商品预览图
+        List<Description> descriptionList = this.listProductPreviews(proId);
+        for (Description description : descriptionList) {
+            descriptionDao.deleteProDescribeByDesId(description.getDesId());
+        }
+
+        //获取原文件名
+        String oriName = productPreviewImg.getOriginalFilename();
+        //获取后缀名
+        String suffixName = oriName.substring(oriName.lastIndexOf("."));
+        //组织文件名
+        String pictureStorePath = SystemConstant.PREVIEW_IMG_PATH + proId.toString() + suffixName;
+        System.out.println(pictureStorePath);
+        productPreviewImg.transferTo(new File(SystemConstant.STORE_PATH + pictureStorePath));
+
+        //插入描述
+        Description description = new Description();
+        description.setDesBody(pictureStorePath);
+        this.insertDescriptionBySetting(
+                DescribeConstant.IMG, DescribeConstant.PREVIEW, description);
+
+        //关联描述与产品关系
+        descriptionDao.linkToProduct(proId, description.getDesId());
+        return new Result(true, "插入商品预览图片成功");
     }
 
+    @Transactional(rollbackFor=Exception.class)
     @Override
-    public Result insertProductPreview(Integer proId, MultipartFile productPreviewImg) {
-        return null;
-    }
+    public Result insertProductDescribeImg(Integer proId, MultipartFile describeImg) throws Exception {
 
-    @Override
-    public Result insertProductDescribeImgs(Integer proId, List<MultipartFile> describeImgs) {
-        return null;
+        if (proId == null || this.getDOByKey(proId) == null) {
+            return new Result(false, "商品不存在！");
+        }
+
+        //删除原本的商品描述图片
+        List<Description> descriptionList = this.listProductDescribeImgs(proId);
+        for (Description description : descriptionList) {
+            descriptionDao.deleteProDescribeByDesId(description.getDesId());
+        }
+
+        //获取原文件名
+        String oriName = describeImg.getOriginalFilename();
+        // 设置图片名称，不能重复，可以使用uuid
+        String picName = UUID.randomUUID().toString();
+        //获取后缀名
+        String suffixName = oriName.substring(oriName.lastIndexOf("."));
+        //组织文件名
+        String pictureStorePath = SystemConstant.DETAIL_IMG_PATH + picName + suffixName;
+        System.out.println(pictureStorePath);
+        describeImg.transferTo(new File(SystemConstant.STORE_PATH + pictureStorePath));
+
+        //插入描述
+        Description description = new Description();
+        description.setDesBody(pictureStorePath);
+        this.insertDescriptionBySetting(
+                DescribeConstant.IMG, DescribeConstant.DETAIL_DESCRIBE, description);
+        //关联描述与产品关系
+        descriptionDao.linkToProduct(proId, description.getDesId());
+        return new Result(true, "更新详细描述图片成功");
     }
 
     @Override
