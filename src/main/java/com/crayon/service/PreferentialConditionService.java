@@ -44,5 +44,5 @@ public interface PreferentialConditionService extends BaseService<PreferentialCo
      * @param purQuantity
      * @return
      */
-    Float getPriceAfterPrefer(Integer proId,Integer purQuantity) throws Exception;
+    Float getPriceAfterPrefer(Integer proId,Integer purQuantity,Float proUnitPrice) throws Exception;
 }

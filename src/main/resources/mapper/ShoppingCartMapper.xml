@@ -16,7 +16,8 @@
     <!--获取用户购物车-->
     <select id="listUserShoppingCart" parameterType="Integer"
             resultType="com.crayon.pojo.ProductList">
-        select pl.proListId, pl.proId, pl.purQuantity, pl.proTotPrice, pl.proUnitPrice from shoppingcart sc
+        select pl.proListId, pl.proId, pl.purQuantity, pl.proTotPrice, pl.proUnitPrice,
+               pl.favorableTotPrice, pl.proReduce, pl.userReduce from shoppingcart sc
         join productlist pl on sc.proListId = pl.proListId
         where sc.userId = #{userId};
     </select>
@@ -61,16 +62,22 @@
         where cartId = #{cartId};
     </delete>
 
+    <!--userId,proId 从购物车中移除此单元-->
+    <delete id="deleteProductListByProListId">
+        delete from shoppingcart
+        where userId = #{userId} and proListId = #{proListId};
+    </delete>
+
     <!--清空客户购物车-->
-    <!--先删除productList相应的内容-->
-    <!--再删除购物车单元相应的内容-->
+    <!--先删除购物车单元相应的内容-->
+    <!--再删除productList相应的内容-->
     <delete id="clearShoppingCart" parameterType="Integer">
+        delete from shoppingcart
+        where shoppingcart.userId = #{userId};
+
         delete from productlist
         where productlist.proListId = (
             select sc.proListId from shoppingcart sc
             where sc.userId = #{userId});
-
-        delete from shoppingcart
-        where shoppingcart.userId = #{userId};
     </delete>
 </mapper>

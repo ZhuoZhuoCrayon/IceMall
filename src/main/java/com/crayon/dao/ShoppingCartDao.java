@@ -33,4 +33,7 @@ public interface ShoppingCartDao {
 
     ProductList getProductListByProId(@Param("proId") Integer proId,
                                       @Param("userId") Integer userId);
+
+    void deleteProductListByProListId(@Param("proListId") Integer proListId,
+                                      @Param("userId") Integer userId);
 }

@@ -71,7 +71,8 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
          ProductList productList = new ProductList(proId,purQuantity,proTotPrice,proUnitPrice);
 
          //计算执行商品优惠后的总价
-         float priceAfterPrefer = preferentialConditionService.getPriceAfterPrefer(proId,purQuantity);
+         float priceAfterPrefer = preferentialConditionService.getPriceAfterPrefer(proId,purQuantity,proUnitPrice);
+
          //设置商品优惠的折扣金额
          productList.setProReduce(proTotPrice - priceAfterPrefer);
 
@@ -90,13 +91,13 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
      * @param proListId
      * @return
      */
-    public Result deleteShoppingCartByProListId(Integer proListId){
-        try {
-            productListDao.deleteByKey(proListId);
-            return new Result(true,"成功移除该商品");
-        }catch (Exception e){
-            return new Result(false,"删除商品项失败");
-        }
+    @Override
+    public Result deleteShoppingCartByProListId(Integer proListId) throws Exception{
+        //先移除购物车单元
+        //再移除商品单元
+        shoppingCartDao.deleteProductListByProListId(proListId, userService.getCurrentUser().getUserId());
+        productListDao.deleteByKey(proListId);
+        return new Result(true, "成功移除该商品");
     }
 
     /**
@@ -179,8 +180,12 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     public Result clearShoppingCart() throws Exception{
         //获取当前登录的用户userId
         int userId = userService.getCurrentUser().getUserId();
-        //清空用户购物车
-        shoppingCartDao.clearShoppingCart(userId);
+        List<ProductList> userShoppingCart = shoppingCartDao.listUserShoppingCart(userId);
+
+        for(ProductList productList:userShoppingCart){
+            this.deleteShoppingCartByProListId(productList.getProListId());
+        }
+
         return new Result(true,"清空购物车成功");
     }
 }

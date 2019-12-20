@@ -31,7 +31,12 @@ public class ShoppingCartController {
     @ApiOperation("从登录用户购物车中删除指定商品")
     public Result deleteShoppingCartByProListId(
             @RequestParam(value = "proListId", required = false) Integer proListId){
-        return shoppingCartService.deleteShoppingCartByProListId(proListId);
+        try {
+            return shoppingCartService.deleteShoppingCartByProListId(proListId);
+        }catch (Exception e){
+            e.printStackTrace();
+            return new Result(false,"删除商品项失败");
+        }
     }
 
 

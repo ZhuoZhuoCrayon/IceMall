@@ -29,7 +29,7 @@ public interface ShoppingCartService{
      * @param proListId
      * @return
      */
-    Result deleteShoppingCartByProListId(Integer proListId);
+    Result deleteShoppingCartByProListId(Integer proListId) throws Exception;
 
     /**
      * 向购物车中插入商品

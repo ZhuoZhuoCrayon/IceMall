@@ -197,8 +197,9 @@ public class PreferentialConditionServiceImpl implements PreferentialConditionSe
      * @param purQuantity
      * @return
      */
-    public Float getPriceAfterPrefer(Integer proId,Integer purQuantity) throws Exception{
-        float priceAfterPrefer = proId * purQuantity;
+    @Override
+    public Float getPriceAfterPrefer(Integer proId,Integer purQuantity,Float proUnitPrice) throws Exception{
+        float priceAfterPrefer = proUnitPrice * purQuantity;
         //获取优惠方式
         PreferentialMethod preferentialMethod = this.getPreferentialMethodByProId(proId);
         //获取优惠代码
