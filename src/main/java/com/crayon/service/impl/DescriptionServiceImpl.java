@@ -126,6 +126,26 @@ public class DescriptionServiceImpl implements DescriptionService {
         }
     }
 
+    /**
+     * 根据商品Id获取商品描述信息
+     * @param proId
+     * @return
+     */
+    @Override
+    public List<Description> listProductDescribes(Integer proId){
+        try {
+            return descriptionDao.listProductDescriptionsByFilter(
+                    proId,
+                    DescribeConstant.TEXT,
+                    DescribeConstant.DESCRIBE);
+        }catch (Exception e){
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+    }
+
+
+
     @Override
     public Description getDOByKey(Integer DOId) {
         try{

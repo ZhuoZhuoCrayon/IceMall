@@ -53,6 +53,14 @@ public class DescriptionController {
         return descriptionService.listProductEvaluationsByProId(proId);
     }
 
+    @RequestMapping(value = "listProductDescribes.do",method = RequestMethod.POST,produces = "application/json")
+    @ApiOperation("根据商品Id获取商品详细描述")
+    public List<Description> listProductDescribes(
+            @RequestParam(value = "proId", required = false) Integer proId){
+        return descriptionService.listProductDescribes(proId);
+    }
+
+
     @RequestMapping(value = "insertEvaluation.do",method = RequestMethod.POST,produces = "application/json")
     @ApiOperation("提交商品评价")
     public Result insertEvaluation(@RequestBody Evaluation evaluation){

@@ -36,6 +36,13 @@ public interface DescriptionService extends BaseService<Description> {
      * @return
      */
     List<Description> listProductDescribeImgs(Integer proId);
+
+    /**
+     * 根据商品Id获取商品描述信息
+     * @param proId
+     * @return
+     */
+    List<Description> listProductDescribes(Integer proId);
     /**
      * 根据模式插入描述模块
      * @param type
