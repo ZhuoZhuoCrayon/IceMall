@@ -4,7 +4,6 @@ import com.crayon.dto.CusSimple;
 import com.crayon.dto.Result;
 import com.crayon.dto.UserRegisterBean;
 import com.crayon.service.UserService;
-import com.crayon.service.impl.user_manage.UserServiceImpl;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.SecurityUtils;
@@ -19,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 public class SystemController {
 
     @Autowired
-    private UserServiceImpl userServiceImpl;
+    private UserService userService;
 
 
     @RequestMapping(value = "/login.do",method = RequestMethod.POST)
@@ -88,7 +87,7 @@ public class SystemController {
     @RequestMapping(value = "register.do",method = RequestMethod.POST)
     @ApiOperation(value = "客户注册",httpMethod = "POST")
     public Result register(@RequestBody UserRegisterBean userRegisterBean){
-        return userServiceImpl.registerForCustomer(userRegisterBean);
+        return userService.registerForCustomer(userRegisterBean);
     }
 
     @RequestMapping(value = "getCusSimple.do",method = RequestMethod.GET)
@@ -96,7 +95,7 @@ public class SystemController {
     public CusSimple getCusSimple(){
         //获取连接状态用户名
         String userName = (String) SecurityUtils.getSubject().getPrincipal();
-        return userServiceImpl.getCusSimple(userName);
+        return userService.getCusSimple(userName);
     }
 
 }

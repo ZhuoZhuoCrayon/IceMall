@@ -10,7 +10,9 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -25,6 +27,7 @@ public class ProductController {
     public Integer countProducts(){
         return productService.countDOs();
     }
+
 
     @RequestMapping(value = "listAllProducts.do",method = RequestMethod.GET,produces = "application/json")
     @ApiOperation("获取商品详细信息[不含优惠信息]")
@@ -90,4 +93,5 @@ public class ProductController {
             @RequestBody Product product){
         return productService.insert(product);
     }
+
 }
