@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.crayon.dao.TransportationDao">
+
+    <select id="countTransportation" resultType="Integer">
+        select count(*)
+        from transportation;
+    </select>
+
+    <select id="listAllTransportation" resultType="com.crayon.pojo.Transportation">
+        select * from transportation;
+    </select>
+
+
+    <!-- 根据TransId查询-->
+    <select id="getTransportationByKey" parameterType="Integer"
+            resultType="com.crayon.pojo.Transportation">
+        SELECT * FROM transportation
+        where transId = #{transId};
+    </select>
+
+    <insert id="insert" parameterType="com.crayon.pojo.Transportation" >
+        insert into transportation(resEId, transMethod, origin, destination, postage, transCreationTime)
+        values (#{resEId},#{transMethod}, #{origin}, #{destination}, #{postage}, #{transCreationTime});
+    </insert>
+
+    <update id="update" parameterType="com.crayon.pojo.Transportation">
+        update transportation
+        <set>
+            <if test="resEId!=null">
+                resEId = #{resEId},
+            </if>
+            <if test="transMethod!=null">
+                transMethod = #{transMethod},
+            </if>
+            <if test="origin!=null">
+                origin = #{origin},
+            </if>
+            <if test="destination!=null">
+                destination = #{destination},
+            </if>
+            <if test="postage!=null">
+                postage = #{postage},
+            </if>
+            <if test="transCreationTime!=null">
+                transCreationTime = #{transCreationTime},
+            </if>
+        </set>
+        where transId = #{transId};
+    </update>
+
+    <delete id="deleteByKey" parameterType="Integer">
+        delete from transportation
+        where transId = #{transId};
+    </delete>
+</mapper>
