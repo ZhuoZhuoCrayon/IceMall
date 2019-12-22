@@ -1,9 +1,10 @@
 package com.crayon.controller.user_manage;
 
-import com.crayon.dto.CusSimple;
-import com.crayon.dto.Result;
-import com.crayon.dto.UserRegisterBean;
+import com.crayon.dto.*;
+import com.crayon.pojo.user_manage.Role;
+import com.crayon.service.BaseService;
 import com.crayon.service.UserService;
+import com.crayon.service.impl.user_manage.RoleServiceImpl;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.SecurityUtils;
@@ -12,6 +13,9 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.List;
+
 @RestController
 @RequestMapping("/system")
 @Api(value = "系统管理")
@@ -19,6 +23,8 @@ public class SystemController {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private RoleServiceImpl roleService;
 
 
     @RequestMapping(value = "/login.do",method = RequestMethod.POST)
@@ -54,7 +60,14 @@ public class SystemController {
                 //用户获取当前登录的用户名
                 /*String username = (String) SecurityUtils.getSubject().getPrincipal();
                 System.out.println(username);*/
-                return new Result(true, "success");
+                //获取用户身份
+                String role = (String) userService.getRolesByUserName(username).toArray()[0];
+
+                //添加身份校验并返回
+                HashMap<String,Object> plusParams = new HashMap<>();
+                plusParams.put("role",role.equals("customer")?role:"admin");
+                return new Result(true, "success",plusParams);
+
             } catch (UnknownAccountException e) {
                 //e.printStackTrace();
                 error = "用户账户不存在";
@@ -84,18 +97,36 @@ public class SystemController {
         return new Result(false, error);
     }
 
+    @RequestMapping(value = "/changePasswordSys.do",method = RequestMethod.POST)
+    @ApiOperation(value = "修改密码[需要登录]",httpMethod = "POST")
+    public Result login(
+            @RequestParam(value = "oldPassword", required = false) String oldPassword,
+            @RequestParam(value = "newPassword", required = false) String newPassword) {
+        return userService.changePasswordSys(oldPassword,newPassword);
+    }
+
+    @RequestMapping(value = "addEmployee.do",method = RequestMethod.POST)
+    @ApiOperation(value = "添加员工:需要员工管理权限",httpMethod = "POST")
+    public Result addEmployee(@RequestBody EmployeeRegisterBean employeeRegisterBean){
+        return userService.addEmployee(employeeRegisterBean);
+    }
+
     @RequestMapping(value = "register.do",method = RequestMethod.POST)
     @ApiOperation(value = "客户注册",httpMethod = "POST")
     public Result register(@RequestBody UserRegisterBean userRegisterBean){
         return userService.registerForCustomer(userRegisterBean);
     }
 
-    @RequestMapping(value = "getCusSimple.do",method = RequestMethod.GET)
-    @ApiOperation(value = "获取当前登录客户的简要展示信息",httpMethod = "GET")
-    public CusSimple getCusSimple(){
-        //获取连接状态用户名
-        String userName = (String) SecurityUtils.getSubject().getPrincipal();
-        return userService.getCusSimple(userName);
+    @RequestMapping(value = "getUserSimple.do",method = RequestMethod.GET)
+    @ApiOperation(value = "获取当前登录用户的简要展示信息",httpMethod = "GET")
+    public UserSimple getUserSimple(){
+        return userService.getUserSimple();
+    }
+
+    @RequestMapping(value = "listAllRoles.do",method = RequestMethod.GET)
+    @ApiOperation(value = "获取系统角色信息:用于系统员工注册",httpMethod = "GET")
+    public List<Role> listAllRoles(){
+        return roleService.listAllDOs();
     }
 
 }

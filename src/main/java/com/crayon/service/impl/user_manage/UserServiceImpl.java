@@ -2,16 +2,20 @@ package com.crayon.service.impl.user_manage;
 
 import com.crayon.dao.CusLevelDao;
 import com.crayon.dao.user_manage.CustomerDao;
+import com.crayon.dao.user_manage.EmployeeDao;
+import com.crayon.dao.user_manage.RoleDao;
 import com.crayon.dao.user_manage.UserDao;
-import com.crayon.dto.CusSimple;
-import com.crayon.dto.Result;
-import com.crayon.dto.UserRegisterBean;
+import com.crayon.dto.*;
 import com.crayon.pojo.CusLevel;
 import com.crayon.pojo.user_manage.Customer;
+import com.crayon.pojo.user_manage.Employee;
+import com.crayon.pojo.user_manage.Role;
 import com.crayon.pojo.user_manage.User;
 import com.crayon.service.Helper.PasswordHelper;
 import com.crayon.service.UserService;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
@@ -19,10 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 @Component
 @Service
@@ -31,6 +32,10 @@ public class UserServiceImpl implements UserService {
     private UserDao userDao;
     @Autowired
     private CustomerDao customerDao;
+    @Autowired
+    private EmployeeDao employeeDao;
+    @Autowired
+    private RoleDao roleDao;
     @Autowired
     private PasswordHelper passwordHelper;
 
@@ -57,6 +62,21 @@ public class UserServiceImpl implements UserService {
     public List<User> listDOsById(Integer id) {
         try{
             return userDao.listUsersById(id);
+        }catch (Exception e){
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+    }
+
+    /**
+     * 根据职位查找员工
+     * @param role
+     * @return
+     */
+    @Override
+    public List<Employee> listEmployeesByRole(String role){
+        try{
+            return employeeDao.listEmployeesByRole(role);
         }catch (Exception e){
             e.printStackTrace();
             return new ArrayList<>();
@@ -196,6 +216,34 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Override
+    public Result changePasswordSys(String oldPassword,String newPassword){
+
+        try {
+            if (oldPassword == null || oldPassword.length() == 0) {
+                return new Result(false, "请输入旧密码");
+            }
+            if (newPassword == null || newPassword.length() == 0) {
+                return new Result(false, "请输入旧密码");
+            }
+            if (newPassword.equals(oldPassword)) {
+                return new Result(false, "严肃一点，修改密码要输入不一样的密码！");
+            }
+            User user = this.getCurrentUser();
+
+            Subject subject = SecurityUtils.getSubject();
+            UsernamePasswordToken token = new UsernamePasswordToken(user.getUserName(), oldPassword);
+            subject.login(token);
+
+            this.changePassword(user.getUserId(),newPassword);
+            return new Result(true,"修改密码成功！");
+
+        }catch (Exception e){
+            return new Result(false,"修改密码失败，请检查旧密码是否输入正确");
+        }
+
+    }
+
     @Transactional(rollbackFor=Exception.class)
     @Override
     public Result registerForCustomer(UserRegisterBean userRegisterBean) {
@@ -214,7 +262,7 @@ public class UserServiceImpl implements UserService {
                 userDao.linkRole(userId,"customer");
 
                 //创建customer,用户等级初始为1-non
-                customerDao.insert(new Customer(userId,null,1));
+                customerDao.insert(new Customer(userId,"新注册",1));
                 return new Result(true,"注册成功");
             }
         }catch (Exception e){
@@ -225,26 +273,78 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+
+    @Transactional(rollbackFor=Exception.class)
+    @Override
+    public  Result addEmployee(EmployeeRegisterBean employeeRegisterBean){
+        try {
+            User user = new User(employeeRegisterBean);
+            if (user.getUserName() == null || user.getPassword() == null) {
+                return new Result(false, "员工名或密码为空，请正确填写");
+            }
+            if (userDao.getUserByName(user.getUserName()) != null) {
+                return new Result(false, "员工名已存在");
+            }
+            String role = employeeRegisterBean.getRole();
+
+            if(roleDao.getRoleByRole(role).size()==0){
+                return new Result(false,"不存在该职位");
+            }
+            passwordHelper.encryptPassword(user);
+            //插入并且获取自增id
+            userDao.insert(user);
+            int userId = user.getUserId();
+            //关联角色：普通客户
+            userDao.linkRole(userId, role);
+
+            //创建employee,
+            employeeDao.insert(new Employee(userId, 0F, role));
+            return new Result(true, "添加员工成功");
+        }catch (Exception e){
+            e.printStackTrace();
+            //出错则事务回滚
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return new Result(false,"Error");
+        }
+    }
+
+
     /**
-     * 根据用户名获取客户登录的简要信息
-     * @param userName
+     * 获取用户登录信息
      * @return
      */
     @Override
-    public CusSimple getCusSimple(String userName){
+    public UserSimple getUserSimple(){
         try{
-            CusLevel cusLevel = userDao.getCusLevelByUserName(userName);
+            //获取登录用户
+            User user = this.getCurrentUser();
+            //获取用户身份(英文）
+            String role = (String) this.getRolesByUserName(user.getUserName()).toArray()[0];
+            HashMap<String,Object> userParams = new HashMap<>();
 
-            CusSimple cusSimple = new CusSimple();
-            cusSimple.setUserName(userName);
-            cusSimple.setRole((String) userDao.getRoleDesByUserName(userName).toArray()[0]);
-            cusSimple.setLevelName(cusLevel.getLevelName());
-            cusSimple.setLevelDiscount(cusLevel.getLevelDiscount());
-            return cusSimple;
+            UserSimple userSimple = new UserSimple();
+            userSimple.setUserName(user.getUserName());
+            //中文
+            userSimple.setRole((String) userDao.getRoleDesByUserName(user.getUserName()).toArray()[0]);
+
+            if(role.equals("customer")){
+                CusLevel cusLevel = userDao.getCusLevelByUserName(user.getUserName());
+                userParams.put("cusLevel",cusLevel.getLevelName());
+                userParams.put("setLevelDiscount",cusLevel.getLevelDiscount());
+            }else{
+                Employee employee = employeeDao.getEmployeeByKey(user.getUserId());
+                userParams.put("empWorkload",employee.getEmpWorkload());
+                userParams.put("empOccupation",employee.getEmpOccupation());
+            }
+
+            userSimple.setUserParams(userParams);
+
+            return userSimple;
+
         }catch (Exception e){
             e.printStackTrace();
-            return new CusSimple();
+            return new UserSimple();
         }
-
     }
+
 }
