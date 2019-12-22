@@ -2,6 +2,7 @@ package com.crayon.shiro.realm;
 
 import com.crayon.pojo.user_manage.User;
 import com.crayon.service.UserService;
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
@@ -87,6 +88,7 @@ public class UserRealm extends AuthorizingRealm {
     public void clearAllCachedAuthenticationInfo() {
         getAuthenticationCache().clear();
     }
+
 
     public void clearAllCache() {
         clearAllCachedAuthenticationInfo();

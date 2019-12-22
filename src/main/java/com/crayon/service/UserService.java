@@ -95,9 +95,16 @@ public interface UserService extends BaseService<User>{
 
 
     /**
-     *
+     * 新增员工
      * @param employeeRegisterBean
      * @return
      */
     Result addEmployee(EmployeeRegisterBean employeeRegisterBean);
+
+    /**
+     * 增加绩效
+     * @param userId
+     * @return
+     */
+    Result increaseEmpWorkload(Integer userId,float cost);
 }

@@ -13,8 +13,12 @@ import com.crayon.pojo.user_manage.Role;
 import com.crayon.pojo.user_manage.User;
 import com.crayon.service.Helper.PasswordHelper;
 import com.crayon.service.UserService;
+import com.crayon.setting.constant.SystemConstant;
+import com.crayon.shiro.realm.UserRealm;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.mgt.RealmSecurityManager;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -22,6 +26,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
+import sun.security.util.Cache;
 
 import java.util.*;
 
@@ -219,8 +224,12 @@ public class UserServiceImpl implements UserService {
     public Result changePassword(Integer id, String newPassword) {
         try {
             User user = userDao.getUserByKey(id);
+            System.out.println("before: " + user.getPassword());
             user.setPassword(newPassword);
+            System.out.println("new pass:" + newPassword);
+
             passwordHelper.encryptPassword(user);
+            System.out.println("after: " + user.getPassword());
             userDao.update(user);
             return new Result(true,"修改密码成功");
         }catch (Exception e){
@@ -249,6 +258,15 @@ public class UserServiceImpl implements UserService {
             subject.login(token);
 
             this.changePassword(user.getUserId(),newPassword);
+
+            //执行登出并清空缓存
+            subject.logout();
+            RealmSecurityManager securityManager =
+                    (RealmSecurityManager) SecurityUtils.getSecurityManager();
+            RealmSecurityManager rsm = (RealmSecurityManager)SecurityUtils.getSecurityManager();
+            UserRealm userRealm = (UserRealm) rsm.getRealms().iterator().next();
+            userRealm.clearCache(subject.getPrincipals());
+
             return new Result(true,"修改密码成功！");
 
         }catch (Exception e){
@@ -377,6 +395,27 @@ public class UserServiceImpl implements UserService {
             e.printStackTrace();
             return new UserSimple();
         }
+    }
+
+    /**
+     * 增加绩效
+     * @param userId
+     * @return
+     */
+    @Override
+    public Result increaseEmpWorkload(Integer userId,float cost){
+        try {
+            Employee employee = employeeDao.getEmployeeByKey(userId);
+            //增加绩效
+            employee.setEmpWorkload(employee.getEmpWorkload()+cost);
+            employeeDao.update(employee);
+
+            return new Result(true,"增加绩效成功");
+        }catch (Exception e){
+            e.printStackTrace();
+            return new Result(false,"增加绩效失败");
+        }
+
     }
 
 }

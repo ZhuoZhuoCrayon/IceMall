@@ -15,4 +15,9 @@ public interface SystemConstant {
     String SALES_ADMIN = "SalesAdmin";
     String SUPER_ADMIN = "superAdmin";
 
+    Float WorkloadOfTrans = 5.2F;
+    Float WorkloadOfSales = 0.05F;
+    Float WorkloadOfCus = 5.6F;
+    Float WorkloadOfPro = 1.5F;
+    Float WorkloadOfEmp = 25.5F;
 }
