@@ -26,6 +26,12 @@
         where r.id = #{id};
     </select>
 
+    <select id="getRoleByRole" parameterType="String"
+            resultType="com.crayon.pojo.user_manage.Role">
+        SELECT * FROM roles r
+        where r.role = #{role};
+    </select>
+
     <insert id="insert" parameterType="com.crayon.pojo.user_manage.Role"
             useGeneratedKeys="true" keyProperty="id">
         insert into roles(role, description)

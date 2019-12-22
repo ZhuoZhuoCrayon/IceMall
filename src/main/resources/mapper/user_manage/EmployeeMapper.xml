@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.crayon.dao.user_manage.EmployeeDao">
+
+    <select id="countEmployees" resultType="Integer">
+        select count(*)
+        from employee;
+    </select>
+
+    <select id="listAllEmployees" resultType="com.crayon.pojo.user_manage.Employee">
+        select * from employee;
+    </select>
+
+    <!-- 根据身份id查询-->
+    <select id="listEmployeesById" parameterType="Integer"
+            resultType="com.crayon.pojo.user_manage.Employee">
+        SELECT * FROM employee
+        where userId = #{userId};
+    </select>
+
+    <!-- 根据角色role查询-->
+    <select id="listEmployeesByRole" parameterType="String"
+            resultType="com.crayon.pojo.user_manage.Employee">
+        SELECT * FROM employee
+        where empOccupation = #{role};
+    </select>
+
+
+    <!-- 根据身份id查询-->
+    <select id="getEmployeeByKey" parameterType="Integer"
+            resultType="com.crayon.pojo.user_manage.Employee">
+        SELECT * FROM employee
+        where userId = #{userId};
+    </select>
+
+    <insert id="insert" parameterType="com.crayon.pojo.user_manage.Employee" >
+        insert into employee(userId, empWorkload, empOccupation)
+        values (#{userId},#{empWorkload},#{empOccupation});
+    </insert>
+
+    <update id="update" parameterType="com.crayon.pojo.user_manage.Employee">
+        update employee
+        <set>
+            <if test="empWorkload!=null">
+                empWorkload = #{empWorkload},
+            </if>
+            <if test="empOccupation!=null">
+                empOccupation = #{empOccupation},
+            </if>
+        </set>
+        where userId = #{userId};
+    </update>
+
+    <delete id="deleteById" parameterType="Integer">
+        delete from employee
+        where userId = #{userId};
+    </delete>
+
+    <delete id="deleteByKey" parameterType="Integer">
+        delete from employee
+        where userId = #{userId};
+    </delete>
+</mapper>
