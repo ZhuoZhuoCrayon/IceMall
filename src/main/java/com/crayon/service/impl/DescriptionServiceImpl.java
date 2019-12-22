@@ -330,6 +330,32 @@ public class DescriptionServiceImpl implements DescriptionService {
         return null;
     }
 
+
+    @Override
+    public Result clearProductDescribesByProId(Integer proId) throws Exception{
+        List<Description> productDescribes = this.listProductDescribes(proId);
+        for(Description description:productDescribes){
+            descriptionDao.deleteProDescribeByDesId(description.getDesId());
+        }
+        return new Result(true,"清空商品描述成功");
+    }
+
+    /**
+     * 删除指定商品描述：图片/概述/详细
+     * @param desId
+     * @return
+     */
+    public Result deleteProDescribeByDesId(Integer desId){
+        try{
+            descriptionDao.deleteProDescribeByDesId(desId);
+            return new Result(true,"删除商品描述成功");
+        }catch (Exception e){
+            e.printStackTrace();
+            return new Result(false,"删除商品描述失败");
+        }
+
+    }
+
     @Override
     public Result deleteById(Integer DOId) {
         return null;
@@ -339,4 +365,5 @@ public class DescriptionServiceImpl implements DescriptionService {
     public Result deleteByKey(Integer DOId) {
         return null;
     }
+
 }

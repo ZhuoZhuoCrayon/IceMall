@@ -93,4 +93,18 @@ public interface DescriptionService extends BaseService<Description> {
      */
     Result insertProductDescribe(Integer proId,Description description) throws Exception;
 
+
+    /**
+     * 清空商品详细描述
+     * @return
+     */
+    Result clearProductDescribesByProId(Integer proId) throws Exception;
+
+    /**
+     * 删除指定商品描述：图片/概述/详细
+     * @param desId
+     * @return
+     */
+    Result deleteProDescribeByDesId(Integer desId);
+
 }

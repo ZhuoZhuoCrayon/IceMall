@@ -119,4 +119,28 @@ public class DescriptionController {
         }
     }
 
+    @RequestMapping(value = "clearProductDescribesByProId.do",method = RequestMethod.POST)
+    @ApiOperation("清空给定商品的详细描述")
+    public Result clearProductDescribesByProId(
+            @RequestParam(value = "proId", required = false) Integer proId){
+        try{
+            return descriptionService.clearProductDescribesByProId(proId);
+        }catch (Exception e){
+            e.printStackTrace();
+            return new Result(false,"清空失败");
+        }
+    }
+
+    @RequestMapping(value = "deleteProDescribeByDesId.do",method = RequestMethod.POST)
+    @ApiOperation("删除指定商品描述")
+    public Result deleteProDescribeByDesId(
+            @RequestParam(value = "desId", required = false) Integer desId){
+        try{
+            return descriptionService.deleteProDescribeByDesId(desId);
+        }catch (Exception e){
+            e.printStackTrace();
+            return new Result(false,"删除商品描述失败");
+        }
+    }
+
 }
