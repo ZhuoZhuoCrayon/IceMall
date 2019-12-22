@@ -4,8 +4,6 @@
 
 <mapper namespace="com.crayon.dao.OrderDao">
 
-
-
     <select id="countOrders" resultType="Integer">
         select count(*)
         from orders;
@@ -21,6 +19,27 @@
         where orderId = #{orderId};
     </select>
 
+    <!-- 根据客户Id获取订单-->
+    <select id="listOrdersByCusId" parameterType="Integer" resultType="com.crayon.pojo.Order">
+        SELECT * FROM orders
+        where userId = #{cusId};
+    </select>
+
+    <!-- 根据销售管理员Id获取相应订单-->
+    <select id="listOrdersBySalesEmpId" parameterType="Integer" resultType="com.crayon.pojo.Order">
+        SELECT * FROM orders
+        where resEId = #{salesEmpId};
+    </select>
+
+    <!-- 根据物流管理员Id获取相应送货的订单-->
+    <select id="listOrdersByTransEmpId" parameterType="Integer" resultType="com.crayon.pojo.Order">
+        SELECT o.orderId,o.ordStatus,o.userId,o.ordCreationTime,
+        o.ordPayTime,o.transId,o.ordTotPrice,o.resEId
+        FROM orders o
+        join transportation t on o.transId = t.transId
+        where t.resEId =  #{transEmpId};
+    </select>
+
     <!-- 根据order主码查询-->
     <select id="getOrderByKey" parameterType="Integer" resultType="com.crayon.pojo.Order">
         SELECT * FROM orders
@@ -30,9 +49,8 @@
     <!-- 新增订单 -->
     <insert id="insert" parameterType="com.crayon.pojo.Order"
             useGeneratedKeys="true" keyProperty="orderId">
-        insert into orders(ordStatus, userId, ordCreationTime, transId, ordTotPrice, resEId)
-        values (#{ordStatus}, #{userId}, #{ordCreationTime},
-                #{transId}, #{ordTotPrice}, #{resEId});
+        insert into orders(ordStatus, userId, ordCreationTime, ordPayTime, transId, ordTotPrice, resEId)
+        values (#{ordStatus}, #{userId}, #{ordCreationTime},#{ordPayTime},#{transId}, #{ordTotPrice}, #{resEId});
     </insert>
 
     <!--更新订单-->
@@ -48,7 +66,10 @@
             <if test="ordCreationTime!=null">
                 ordCreationTime = #{ordCreationTime},
             </if>
-            <if test="ordProId!=null">
+            <if test="ordPayTime!=null">
+                ordPayTime = #{ordPayTime},
+            </if>
+            <if test="transId!=null">
                 transId = #{transId},
             </if>
             <if test="ordTotPrice!=null">

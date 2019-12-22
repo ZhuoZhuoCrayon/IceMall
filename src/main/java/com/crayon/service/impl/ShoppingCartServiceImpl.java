@@ -12,6 +12,7 @@ import com.crayon.pojo.ShoppingCart;
 import com.crayon.service.PreferentialConditionService;
 import com.crayon.service.ShoppingCartService;
 import com.crayon.service.UserService;
+import com.crayon.setting.constant.SystemConstant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
@@ -36,12 +37,38 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     @Autowired
     private ProductDao productDao;
 
+
+    /**
+     * 检查对应的proList商品单元数组是否存在于购物车
+     * @param proLists
+     * @return
+     */
+    public Boolean checkInShoppingCart(List<Integer> proLists){
+        try{
+            int cnt = 0;
+            for(ProductList productList:this.listUserShoppingCart()){
+                //商品单元存在于购物车,+1
+                if(proLists.contains(productList.getProListId())){
+                    cnt++;
+                }
+            }
+
+            if(cnt == proLists.size())
+                return true;
+            else
+                return false;
+        }catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+
     /**
      * 根据用户Id获取购物车:Id自获取
      * @return
      * @throws Exception
      */
-
     @Override
     public List<ProductList> listUserShoppingCart() {
         try{
@@ -95,6 +122,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     public Result deleteShoppingCartByProListId(Integer proListId) throws Exception{
         //先移除购物车单元
         //再移除商品单元
+        System.out.println(userService.getCurrentUser().getUserName());
         shoppingCartDao.deleteProductListByProListId(proListId, userService.getCurrentUser().getUserId());
         productListDao.deleteByKey(proListId);
         return new Result(true, "成功移除该商品");

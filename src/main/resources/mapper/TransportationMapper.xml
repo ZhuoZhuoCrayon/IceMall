@@ -21,9 +21,11 @@
         where transId = #{transId};
     </select>
 
-    <insert id="insert" parameterType="com.crayon.pojo.Transportation" >
-        insert into transportation(resEId, transMethod, origin, destination, postage, transCreationTime)
-        values (#{resEId},#{transMethod}, #{origin}, #{destination}, #{postage}, #{transCreationTime});
+    <insert id="insert" parameterType="com.crayon.pojo.Transportation"
+            useGeneratedKeys="true" keyProperty="transId">
+        insert into transportation(resEId, transMethod, origin, destination, postage, transCreationTime, transArriveTime)
+        values (#{resEId},#{transMethod}, #{origin}, #{destination},
+                #{postage}, #{transCreationTime},#{transArriveTime});
     </insert>
 
     <update id="update" parameterType="com.crayon.pojo.Transportation">
@@ -46,6 +48,9 @@
             </if>
             <if test="transCreationTime!=null">
                 transCreationTime = #{transCreationTime},
+            </if>
+            <if test="transArriveTime!=null">
+                transArriveTime = #{transArriveTime},
             </if>
         </set>
         where transId = #{transId};

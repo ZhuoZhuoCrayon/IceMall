@@ -10,6 +10,7 @@ public class Transportation {
     private String destination;
     private Float postage;          //运费
     private Date transCreationTime;
+    private Date transArriveTime;
 
     public void setTransId(Integer transId) {
         this.transId = transId;
@@ -33,6 +34,10 @@ public class Transportation {
 
     public void setTransCreationTime(Date transCreationTime) {
         this.transCreationTime = transCreationTime;
+    }
+
+    public void setTransArriveTime(Date transArriveTime) {
+        this.transArriveTime = transArriveTime;
     }
 
     public void setTransMethod(String transMethod) {
@@ -65,6 +70,10 @@ public class Transportation {
 
     public String getTransMethod() {
         return transMethod;
+    }
+
+    public Date getTransArriveTime() {
+        return transArriveTime;
     }
 }
 

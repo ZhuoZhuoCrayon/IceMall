@@ -8,6 +8,7 @@ public class Order implements Serializable {
     private Integer ordStatus;
     private Integer userId;
     private Date ordCreationTime;
+    private Date ordPayTime;
     private Integer transId;
     private Float ordTotPrice;
     private Integer resEId;
@@ -42,10 +43,10 @@ public class Order implements Serializable {
         this.ordCreationTime = ordCreationTime;
     }
 
-
-    public void setResEid(Integer resEid) {
-        this.resEId = resEid;
+    public void setOrdPayTime(Date ordPayTime) {
+        this.ordPayTime = ordPayTime;
     }
+
 
     public Integer getOrderId() {
         return orderId;
@@ -74,5 +75,9 @@ public class Order implements Serializable {
 
     public Integer getTransId() {
         return transId;
+    }
+
+    public Date getOrdPayTime() {
+        return ordPayTime;
     }
 }

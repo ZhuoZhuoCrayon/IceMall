@@ -7,6 +7,12 @@ import java.util.List;
 
 public interface ShoppingCartService{
 
+    /**
+     * 检查对应的proList商品单元数组是否存在于购物车
+     * @param proLists
+     * @return
+     */
+    Boolean checkInShoppingCart(List<Integer> proLists);
 
     /**
      * 根据用户Id获取购物车:Id自获取
