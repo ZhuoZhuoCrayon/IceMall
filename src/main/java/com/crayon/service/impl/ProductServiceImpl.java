@@ -177,6 +177,12 @@ public class ProductServiceImpl implements ProductService {
                             proId,
                             DescribeConstant.IMG,
                             DescribeConstant.PREVIEW);
+            //获取商品预览描述
+            List<Description> previewDescriptionList = descriptionDao.
+                    listProductDescriptionsByFilter(
+                            proId,
+                            DescribeConstant.TEXT,
+                            DescribeConstant.PREVIEW_DESCRIBE);
 
             //没有预览图，则图片路径为空，其实也可是默认图片
             productDetail.setProImgUrl(descriptions.size()==0?null:
@@ -184,6 +190,10 @@ public class ProductServiceImpl implements ProductService {
 
             productDetail.setPreferentialMethod(
                     preferentialConditionService.getPreferentialMethodByProId(proId));
+
+            //设置预览描述
+            productDetail.setPreviewDescribe(previewDescriptionList.size()==0?null:
+                    previewDescriptionList.get(0).getDesBody());
 
             return productDetail;
         }catch (Exception e){

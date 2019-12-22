@@ -4,6 +4,7 @@ import com.crayon.pojo.Product;
 
 public class ProductDetail extends Product {
     private Integer sales;                              //销量
+    private String previewDescribe;                     //预览描述
     private String proImgUrl;                           //预览图片
     private PreferentialMethod preferentialMethod;      //优惠方式
 
@@ -28,6 +29,10 @@ public class ProductDetail extends Product {
         this.proImgUrl = proImgUrl;
     }
 
+    public void setPreviewDescribe(String previewDescribe) {
+        this.previewDescribe = previewDescribe;
+    }
+
     public void setPreferentialMethod(PreferentialMethod preferentialMethod) {
         this.preferentialMethod = preferentialMethod;
     }
@@ -42,5 +47,9 @@ public class ProductDetail extends Product {
 
     public PreferentialMethod getPreferentialMethod() {
         return preferentialMethod;
+    }
+
+    public String getPreviewDescribe() {
+        return previewDescribe;
     }
 }
