@@ -1,5 +1,6 @@
 package com.crayon.dao.user_manage;
 
+import com.crayon.dto.UserAddress;
 import com.crayon.pojo.CusLevel;
 import com.crayon.pojo.user_manage.User;
 import org.apache.ibatis.annotations.Param;
@@ -19,6 +20,8 @@ public interface UserDao {
     Set<String> getRoleDesByUserName(String userName) throws Exception;
     Set<String> getPermissionsByUserName(String userName) throws Exception;
     CusLevel getCusLevelByUserName(String userName) throws Exception;
+
+    UserAddress getUserAddressByUserName(String userName) throws Exception;
 
     /**
      * 通过用户Id和角色名称关联用户角色关系

@@ -123,10 +123,21 @@ public class SystemController {
         return userService.getUserSimple();
     }
 
+    @RequestMapping(value = "getUserAddress.do",method = RequestMethod.GET)
+    @ApiOperation(value = "获取当前登录用户的联系方式[地址+手机号码]",httpMethod = "GET")
+    public UserAddress getUserAddress(){
+        return userService.getUserAddress();
+    }
+
     @RequestMapping(value = "listAllRoles.do",method = RequestMethod.GET)
     @ApiOperation(value = "获取系统角色信息:用于系统员工注册",httpMethod = "GET")
     public List<Role> listAllRoles(){
         return roleService.listAllDOs();
     }
 
+    @RequestMapping(value = "changeUserInfo.do",method = RequestMethod.POST)
+    @ApiOperation(value = "修改用户信息[需要登录]",httpMethod = "POST")
+    public Result changeUserInfo(@RequestBody UserRegisterBean userRegisterBean){
+        return userService.changeUserInfo(userRegisterBean);
+    }
 }

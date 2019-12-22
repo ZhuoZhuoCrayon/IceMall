@@ -56,6 +56,13 @@ public interface UserService extends BaseService<User>{
      */
     UserSimple getUserSimple();
 
+
+    /**
+     * 获取当前登录用户的地址信息
+     * @return
+     */
+    UserAddress getUserAddress();
+
     /**
      * 修改用户密码
      * @param id
@@ -63,6 +70,12 @@ public interface UserService extends BaseService<User>{
      * @return
      */
     Result changePassword(Integer id, String newPassword);
+
+    /**
+     * 修改用户信息
+     * @return
+     */
+    Result changeUserInfo(UserRegisterBean userRegisterBean);
 
 
     /**

@@ -8,6 +8,7 @@ public class UserRegisterBean implements Serializable {
     private String password;
     private String email;
     private String phoneNumber;
+    private String address;
     private Date birthday;
 
 
@@ -17,14 +18,20 @@ public class UserRegisterBean implements Serializable {
                             String password,
                             String email,
                             String phoneNumber,
+                            String address,
                             Date birthday){
         this.userName = userName;
         this.password = password;
         this.phoneNumber = phoneNumber;
+        this.address = address;
         this.email = email;
         this.birthday = birthday;
     }
 
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
 
     public void setUserName(String userName) {
         this.userName = userName;
@@ -70,4 +77,7 @@ public class UserRegisterBean implements Serializable {
         return phoneNumber;
     }
 
+    public String getAddress() {
+        return address;
+    }
 }

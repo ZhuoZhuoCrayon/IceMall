@@ -118,7 +118,6 @@ public class UserServiceImpl implements UserService {
             if(userDao.getUserByKey(user.getUserId())!=null){
                 return new Result(false,"用户已存在");
             }else{
-                passwordHelper.encryptPassword(user);
                 userDao.insert(user);
                 return new Result(true,"创建用户成功");
             }
@@ -202,6 +201,20 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+
+    /**
+     * 获取当前登录用户的地址信息
+     * @return
+     */
+    @Override
+    public UserAddress getUserAddress(){
+        try{
+            return userDao.getUserAddressByUserName(this.getCurrentUser().getUserName());
+        }catch (Exception e){
+            return null;
+        }
+    }
+
     @Override
     public Result changePassword(Integer id, String newPassword) {
         try {
@@ -240,6 +253,25 @@ public class UserServiceImpl implements UserService {
 
         }catch (Exception e){
             return new Result(false,"修改密码失败，请检查旧密码是否输入正确");
+        }
+
+    }
+
+    /**
+     * 修改用户信息
+     * @return
+     */
+    @Override
+    public Result changeUserInfo(UserRegisterBean userRegisterBean){
+        try{
+            User user = this.getCurrentUser();
+            User userAfterEdit = new User();
+            userAfterEdit.changeInfo(userRegisterBean);
+            userAfterEdit.setUserId(user.getUserId());
+            userDao.update(userAfterEdit);
+            return new Result(true,"修改个人信息成功");
+        }catch (Exception e){
+            return new Result(false,"修改个人信息失败");
         }
 
     }

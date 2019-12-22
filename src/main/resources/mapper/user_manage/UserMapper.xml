@@ -78,13 +78,20 @@
         where users.userName = #{userName};
     </select>
 
+    <!-- 根据用户名获取用户地址信息-->
+    <select id="getUserAddressByUserName" parameterType="String"
+            resultType="com.crayon.dto.UserAddress">
+        select userName,address,phoneNumber from users
+        where userName = #{userName};
+    </select>
+
     <!-- 创建用户 -->
     <insert id="insert" parameterType="com.crayon.pojo.user_manage.User"
             useGeneratedKeys="true" keyProperty="userId">
-        INSERT INTO users(userName, password, salt, email, phoneNumber, registerDate, birthday)
+        INSERT INTO users(userName, password, salt, email, phoneNumber, address, registerDate, birthday)
         VALUES
         (#{userName},#{password},#{salt},
-        #{email},#{phoneNumber},#{registerDate},#{birthday});
+        #{email},#{phoneNumber},#{address},#{registerDate},#{birthday});
     </insert>
 
     <insert id="linkRole">
@@ -111,6 +118,9 @@
             </if>
             <if test="phoneNumber != null">
                 phoneNumber = #{phoneNumber},
+            </if>
+            <if test="address != null">
+                address = #{address},
             </if>
             <if test="registerDate != null">
                 registerDate = #{registerDate},
