@@ -88,7 +88,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
      * @throws Exception
      */
     @Override
-     public ProductList calProductList(Integer proId,Integer purQuantity) throws Exception{
+     public ProductList calProductList(Integer proId,Integer purQuantity,boolean mode) throws Exception{
 
          //获取商品
          Product product = productDao.getProductByKey(proId);
@@ -103,9 +103,13 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
          //设置商品优惠的折扣金额
          productList.setProReduce(proTotPrice - priceAfterPrefer);
 
-
-         //计算用户优惠后的最终优惠价格
-         float favorableTotPrice = priceAfterPrefer * userService.getCurrentUserDiscount();
+         float favorableTotPrice = 0;
+         if(mode == SystemConstant.BY_USER) {
+             //计算用户优惠后的最终优惠价格
+             favorableTotPrice = priceAfterPrefer * userService.getCurrentUserDiscount();
+         }else if (mode == SystemConstant.BY_EMP){
+             favorableTotPrice = priceAfterPrefer;
+         }
          //设置用户折扣优惠的减免金额
          productList.setUserReduce(priceAfterPrefer - favorableTotPrice);
          productList.setFavorableTotPrice(favorableTotPrice);
@@ -156,7 +160,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 
 
         //获取执行计算后的商品单元
-        ProductList productList = this.calProductList(proId,purQuantity);
+        ProductList productList = this.calProductList(proId,purQuantity,SystemConstant.BY_USER);
 
         //插入商品单元
         productListDao.insert(productList);
@@ -192,7 +196,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         }
 
         //获取执行计算后的商品单元
-        ProductList productList = this.calProductList(proId,purQuantity);
+        ProductList productList = this.calProductList(proId,purQuantity,SystemConstant.BY_USER);
 
         //test
         System.out.println("test1:" + productList.getFavorableTotPrice());

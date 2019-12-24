@@ -13,6 +13,7 @@ import com.crayon.service.ProductService;
 import com.crayon.service.UserService;
 import com.crayon.setting.Constant;
 import com.crayon.setting.constant.DescribeConstant;
+import com.crayon.setting.constant.OrderConstant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
@@ -221,7 +222,7 @@ public class ProductServiceImpl implements ProductService {
             ProductSimple productSimple = new ProductSimple();
             productSimple.copyByProduct(product);
             //只统计完成的订单
-            productSimple.setSales(getProductSales(proId, Constant.FINISHED));
+            productSimple.setSales(getProductSales(proId, OrderConstant.FINISHED));
 
             //没有预览图，则图片路径为空，其实也可是默认图片
             productSimple.setProImgUrl(descriptions.size()==0?null:

@@ -6,6 +6,8 @@ import com.crayon.dto.ProductSimple;
 import com.crayon.dto.Result;
 import com.crayon.pojo.Product;
 import com.crayon.service.ProductService;
+import com.crayon.service.UserService;
+import com.crayon.setting.constant.SystemConstant;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +23,8 @@ import java.util.List;
 public class ProductController {
     @Autowired
     private ProductService productService;
+    @Autowired
+    private UserService userService;
 
     @RequestMapping(value = "/countProducts.do",method = RequestMethod.GET)
     @ApiOperation("获取商品种类数量")
@@ -70,6 +74,7 @@ public class ProductController {
     @ApiOperation("根据商品Id获取商品详细[含优惠信息]")
     public Product getProductDetailById(
             @RequestParam(value = "proId", required = false) Integer proId){
+
         return productService.getProductDetailById(proId);
     }
 
@@ -77,6 +82,8 @@ public class ProductController {
     @ApiOperation("根据商品Id删除商品")
     public Result deleteProductById(
             @RequestParam(value = "proId", required = false) Integer proId){
+
+
         return productService.deleteById(proId);
     }
 
@@ -84,6 +91,7 @@ public class ProductController {
     @ApiOperation("更新商品信息")
     public Result updateProduct(
             @RequestBody Product product){
+
         return productService.update(product);
     }
 
@@ -91,6 +99,8 @@ public class ProductController {
     @ApiOperation("新增商品")
     public Result insertProduct(
             @RequestBody Product product){
+
+
         return productService.insert(product);
     }
 

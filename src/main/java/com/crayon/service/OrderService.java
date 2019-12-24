@@ -1,7 +1,6 @@
 package com.crayon.service;
 
-import com.crayon.dto.Result;
-import com.crayon.dto.TransBean;
+import com.crayon.dto.*;
 import com.crayon.pojo.Order;
 import com.crayon.pojo.ProductList;
 import com.crayon.pojo.user_manage.Employee;
@@ -16,6 +15,34 @@ import java.util.Random;
 @Component
 @Service
 public interface OrderService extends BaseService<Order> {
+
+
+    /**
+     * 获取当日销售额
+     * @return
+     */
+    Float getSalesPriceDaily();
+
+    /**
+     * 获取当日总销售量
+     * @return
+     */
+    Integer getSalesDaily();
+
+    /**
+     * 统计当前销量TOP n
+     * @param n
+     * @return
+     */
+    List<ProductDaily> listTopSalesProductsDaily(Integer n);
+
+    /**
+     * 统计历史销量最高n位的ProductSimple
+     * @param n
+     * @return
+     */
+    List<ProductSimple> listTopSalesProductSimples(Integer n);
+
     /**
      * 根据客户身份获取相应的订单信息
      * @return
@@ -36,6 +63,15 @@ public interface OrderService extends BaseService<Order> {
      * @return
      */
     Result createOrder(List<Integer> proListIds) throws Exception;
+
+
+    /**
+     * 根据培豪的意思创建订单
+     * @param orderSubmit
+     * @return
+     * @throws Exception
+     */
+    Result createOrderByEmp(OrderSubmit orderSubmit) throws Exception;
 
     /**
      * 用户进行付款

@@ -9,6 +9,15 @@
         from customer;
     </select>
 
+    <!--获取指定日期注册用户数量-->
+    <select id="countRegisterCusDaily" resultType="Integer">
+        select count(*) from customer c
+        join users u on c.userId = u.userId
+        where extract(year from u.registerDate) = #{year}
+          and extract(month from u.registerDate) = #{month}
+          and extract(day from u.registerDate) = #{day};
+    </select>
+
     <select id="listAllCustomers" resultType="com.crayon.pojo.user_manage.Customer">
         select * from customer;
     </select>

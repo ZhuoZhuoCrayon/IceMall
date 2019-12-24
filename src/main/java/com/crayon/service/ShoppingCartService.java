@@ -28,7 +28,7 @@ public interface ShoppingCartService{
      * @return
      * @throws Exception
      */
-    ProductList calProductList(Integer proId,Integer purQuantity) throws Exception;
+    ProductList calProductList(Integer proId,Integer purQuantity,boolean mode) throws Exception;
 
     /**
      * 根据商品单元Id删除购物车内的商品单元

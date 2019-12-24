@@ -5,6 +5,8 @@ import com.crayon.dto.Result;
 import com.crayon.dto.UserEvaluation;
 import com.crayon.pojo.Description;
 import com.crayon.service.DescriptionService;
+import com.crayon.service.UserService;
+import com.crayon.setting.constant.SystemConstant;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +21,8 @@ import java.util.List;
 public class DescriptionController {
     @Autowired
     DescriptionService descriptionService;
+    @Autowired
+    UserService userService;
 
     @RequestMapping(value = "/countDescriptions.do",method = RequestMethod.GET)
     @ApiOperation("获取描述单元数量")
@@ -74,6 +78,7 @@ public class DescriptionController {
     @RequestMapping(value = "insertProductPreview.do",method = RequestMethod.POST)
     @ApiOperation("上传商品预览图片")
     public Result insertProductPreview(Integer proId, MultipartFile productPreviewImg){
+
         try {
             return descriptionService.insertProductPreview(proId, productPreviewImg);
         }catch (Exception e){
@@ -96,6 +101,7 @@ public class DescriptionController {
     @RequestMapping(value = "insertProductPreviewDescribe.do",method = RequestMethod.POST)
     @ApiOperation("插入商品概要描述:覆盖原来")
     public Result insertProductPreviewDescribe(Integer proId,String desHead,String desBody){
+
         try {
             Description description = new Description();
             description.setDesBody(desBody);
@@ -110,6 +116,9 @@ public class DescriptionController {
     @ApiOperation("插入商品详细描述")
     public Result insertProductDescribe(Integer proId,String desHead,String desBody){
         try {
+
+
+
             Description description = new Description();
             description.setDesBody(desBody);
             description.setDesHead(desHead);
@@ -136,6 +145,7 @@ public class DescriptionController {
     public Result deleteProDescribeByDesId(
             @RequestParam(value = "desId", required = false) Integer desId){
         try{
+
             return descriptionService.deleteProDescribeByDesId(desId);
         }catch (Exception e){
             e.printStackTrace();

@@ -9,6 +9,14 @@
         from orders;
     </select>
 
+    <select id="countUserOrdersByProId" resultType="Integer">
+        select count(*) from customer c
+        join orders o on c.userId = o.userId
+        join orderproductlist op on o.orderId = op.orderId
+        join productlist p on op.proListId = p.proListId
+        where p.proId = #{proId} and c.userId = #{userId} and o.ordStatus = 6;
+    </select>
+
     <select id="listAllOrders" resultType="com.crayon.pojo.Order">
         select * from orders;
     </select>
@@ -45,6 +53,73 @@
         SELECT * FROM orders
         where orderId = #{orderId};
     </select>
+
+
+    <!--获取当日销售额-->
+    <select id="getSalesPriceDaily" resultType="Float">
+        select round(ifnull(sum(ordTotPrice),0),3) from orders
+        where
+        extract(year from ordPayTime) = #{year} and
+        extract(month from ordPayTime) = #{month} and
+        extract(day from ordPayTime) = #{day} and
+        ordStatus != 7 and ordStatus >= 2;
+    </select>
+
+    <!--获取当日总销售量-->
+    <select id="getSalesDaily" resultType="Integer">
+        select ifnull(sum(p.purQuantity),0) from orders o
+        join orderproductlist op on o.orderId = op.orderId
+        join productlist p on op.proListId = p.proListId
+        where
+        extract(year from o.ordPayTime) = #{year} and
+        extract(month from o.ordPayTime) = #{month} and
+        extract(day from o.ordPayTime) = #{day} and
+        o.ordStatus != 7 and o.ordStatus >= 2;
+    </select>
+
+    <!--统计指定日期销量TOP n-->
+    <select id="listTopSalesProductsDaily" resultType="com.crayon.dto.ProductDaily">
+        select p.proId as proId,sum(p.purQuantity) as sales,
+        (select pro.proName from product pro where pro.proId = p.proId) as proName
+        from orders o
+        join orderproductlist op on o.orderId = op.orderId
+        join productlist p on op.proListId = p.proListId
+        where extract(year from o.ordPayTime) = #{year}
+          and extract(month from o.ordPayTime) = #{month}
+          and extract(day from o.ordPayTime) = #{day}
+          and o.ordStatus != 7
+          and o.ordStatus >= 2
+        group by p.proId
+        order by sales desc
+        limit 0,#{n};
+    </select>
+
+
+    <!--统计累积销量TOP n-->
+    <select id="listTopSalesProIds" parameterType="Integer" resultType="Integer">
+        select p.proId as proId
+        from orders o
+        join orderproductlist op on o.orderId = op.orderId
+        join productlist p on op.proListId = p.proListId
+        where o.ordStatus != 7 and o.ordStatus >= 2
+        group by p.proId
+        order by sum(p.purQuantity) desc
+        limit 0,#{n};
+    </select>
+
+    <!--根据用户id查询订单总数-->
+    <select id="countOrderByUserId" parameterType="Integer" resultType="Integer">
+        select count(*)
+        from orders
+        where userId = #{userId};
+    </select>
+
+    <!--根据用户id查询订单总金额-->
+    <select id="getTotPriceByUserId" parameterType="Integer" resultType="Float">
+        select ifnull(sum(ordTotPrice),0)  from orders
+        where userId = #{userId} and ordStatus!=7 and ordStatus>=2;
+    </select>
+
 
     <!-- 新增订单 -->
     <insert id="insert" parameterType="com.crayon.pojo.Order"

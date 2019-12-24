@@ -3,15 +3,11 @@ package com.crayon.service.impl;
 
 import com.crayon.dao.*;
 import com.crayon.dao.user_manage.EmployeeDao;
-import com.crayon.dto.Result;
-import com.crayon.dto.TransBean;
+import com.crayon.dto.*;
 import com.crayon.pojo.*;
 import com.crayon.pojo.user_manage.Employee;
 import com.crayon.pojo.user_manage.User;
-import com.crayon.service.OrderService;
-import com.crayon.service.ShoppingCartService;
-import com.crayon.service.TransportationService;
-import com.crayon.service.UserService;
+import com.crayon.service.*;
 import com.crayon.setting.constant.OrderConstant;
 import com.crayon.setting.constant.SystemConstant;
 import io.swagger.models.auth.In;
@@ -47,6 +43,93 @@ public class OrderServiceImpl implements OrderService {
     ShoppingCartDao shoppingCartDao;
     @Autowired
     ProductDao productDao;
+    @Autowired
+    ProductService productService;
+
+
+
+    /**
+     * 获取当日销售额
+     * @return
+     */
+    @Override
+    public Float getSalesPriceDaily(){
+        try{
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(new Date());					//放入Date类型数据
+
+            System.out.println(calendar.get(Calendar.YEAR) + " " +
+                    calendar.get(Calendar.MONTH) + " " +
+                    calendar.get(Calendar.DATE));
+
+            return orderDao.getSalesPriceDaily(calendar.get(Calendar.YEAR),
+                    calendar.get(Calendar.MONTH)+1, calendar.get(Calendar.DATE));
+        }catch (Exception e){
+            e.printStackTrace();
+            return 0F;
+        }
+    }
+
+    /**
+     * 获取当日总销售量
+     * @return
+     */
+    @Override
+    public Integer getSalesDaily(){
+        try{
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(new Date());					//放入Date类型数据
+
+            return orderDao.getSalesDaily(calendar.get(Calendar.YEAR),
+                    calendar.get(Calendar.MONTH)+1, calendar.get(Calendar.DATE));
+        }catch (Exception e){
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
+    /**
+     * 统计当前销量TOP n
+     * @param n
+     * @return
+     */
+    @Override
+    public List<ProductDaily> listTopSalesProductsDaily(Integer n){
+        try{
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(new Date());					//放入Date类型数据
+
+            return orderDao.listTopSalesProductsDaily(calendar.get(Calendar.YEAR),
+                    calendar.get(Calendar.MONTH)+1, calendar.get(Calendar.DATE), n);
+        }catch (Exception e){
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+    }
+
+
+    /**
+     * 统计历史销量最高n位的ProductSimple
+     * @param n
+     * @return
+     */
+    public List<ProductSimple> listTopSalesProductSimples(Integer n){
+        try{
+            List<ProductSimple> productSimpleList = new ArrayList<>();
+            List<Integer> proIds = orderDao.listTopSalesProIds(n);
+
+            for(Integer proId:proIds){
+                productSimpleList.add(productService.
+                        getProductSimpleByProduct(productDao.getProductByKey(proId)));
+            }
+
+            return productSimpleList;
+        }catch (Exception e){
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+    }
+
 
     /**
      * 为订单分配销售管理员
@@ -206,6 +289,53 @@ public class OrderServiceImpl implements OrderService {
             orderProductListDao.insert(new OrderProductList(proListId,orderId));
         }
 
+        //增加绩效
+        userService.increaseEmpWorkload(order.getResEId(),
+                SystemConstant.WorkloadOfSales * order.getOrdTotPrice());
+
+        HashMap<String,Object> plusParams = new HashMap<>();
+        plusParams.put("orderId",orderId);
+
+        return new Result(true,"创建订单成功",plusParams);
+    }
+
+
+    /**
+     * 根据培豪的意思创建订单
+     * @param orderSubmit
+     * @return
+     * @throws Exception
+     */
+    @Transactional(rollbackFor=Exception.class)
+    @Override
+    public Result createOrderByEmp(OrderSubmit orderSubmit) throws Exception{
+
+        //创建订单
+        Order order = new Order();
+        order.setOrdStatus(orderSubmit.getOrdStatus());
+        order.setUserId(orderSubmit.getUserId());
+        order.setOrdCreationTime(new Date());
+        order.setOrdTotPrice(orderSubmit.getOrdTotPrice());
+        order.setResEId(orderSubmit.getResEId());
+
+        //增加绩效
+        userService.increaseEmpWorkload(orderSubmit.getResEId(),
+                SystemConstant.WorkloadOfSales * orderSubmit.getOrdTotPrice());
+
+        orderDao.insert(order);
+
+        //获取订单号
+        Integer orderId = order.getOrderId();
+
+        for(ProductAmount productAmount:orderSubmit.getProductAmountList()){
+            //计算productList
+            ProductList productList = shoppingCartService.calProductList(productAmount.getProId(),
+                    productAmount.getPurQuantity(),SystemConstant.BY_EMP);
+            //插入商品单元
+            productListDao.insert(productList);
+            orderProductListDao.insert(new OrderProductList(productList.getProListId(),orderId));
+        }
+
         HashMap<String,Object> plusParams = new HashMap<>();
         plusParams.put("orderId",orderId);
 
@@ -224,8 +354,9 @@ public class OrderServiceImpl implements OrderService {
         if(!order.getUserId().equals(userService.getCurrentUser().getUserId())){
             return new Result(false,"这不是您的订单~");
         }
-        if(order.getOrdStatus() != OrderConstant.UNPAID){
-            return new Result(false,"订单不处于待支付状态");
+        if(order.getOrdStatus() != OrderConstant.UNPAID &&
+                order.getOrdStatus() != OrderConstant.APPOINTMENT){
+            return new Result(false,"订单不处于待支付状态或预约状态");
         }
 
         Result result = transportationService.initTransportation(transBean);
@@ -268,6 +399,9 @@ public class OrderServiceImpl implements OrderService {
             return new Result(false,"您没有该权限");
         }
 
+        if(order.getOrdStatus()==null){
+            return new Result(false,"订单状态未设置，请寻求管理员帮助");
+        }
         if(order.getOrdStatus() != OrderConstant.PAID){
             return new Result(false,"订单不是[已付款]状态");
         }
@@ -323,6 +457,10 @@ public class OrderServiceImpl implements OrderService {
         Transportation transportation = transportationDao.getTransportationByKey(order.getTransId());
         transportation.setResEId(transportationService.allocEidForTrans());
         transportationDao.update(transportation);
+
+
+        //增加绩效
+        userService.increaseEmpWorkload(transportation.getResEId(), SystemConstant.WorkloadOfTrans);
 
         //更新状态
         order.setOrdStatus(OrderConstant.TRANSPORTING);
@@ -457,4 +595,6 @@ public class OrderServiceImpl implements OrderService {
             return new Result(false,"删除订单失败");
         }
     }
+
+
 }

@@ -52,7 +52,7 @@
         select ifnull(sum(p.purQuantity),0) as sales from orders o
         join orderproductlist op on o.orderId = op.orderId
         join productlist p on op.proListId = p.proListId
-        where p.proId = #{proId} and o.ordStatus = #{ordStatus};
+        where p.proId = #{proId} and o.ordStatus != 7 and o.ordStatus >=2;
     </select>
 
 

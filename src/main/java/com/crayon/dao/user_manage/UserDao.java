@@ -32,6 +32,9 @@ public interface UserDao {
     void linkRole(@Param("userId") Integer userId,
                   @Param("roleName") String roleName) throws Exception;
 
+    void deleteLinkRole(@Param("userId") Integer userId,
+                        @Param("roleName") String roleName) throws Exception;
+
 
     void insert(User user) throws Exception;
     void update(User user) throws Exception;

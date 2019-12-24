@@ -99,6 +99,11 @@
         values (null,#{userId},(select id from roles where role=#{roleName}))
     </insert>
 
+    <delete id="deleteLinkRole">
+        delete from users_roles
+        where user_id = #{userId} and (select id from roles where role=#{roleName});
+    </delete>
+
 
     <!-- 更新用户信息 -->
     <update id="update" parameterType="com.crayon.pojo.user_manage.User">
@@ -133,7 +138,7 @@
     </update>
 
     <!-- 通过Id移除用户 -->
-    <delete id="delete" parameterType="Integer">
+    <delete id="deleteById" parameterType="Integer">
         DELETE FROM users
         WHERE userId = #{userId};
     </delete>

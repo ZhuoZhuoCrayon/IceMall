@@ -20,4 +20,7 @@ public interface SystemConstant {
     Float WorkloadOfCus = 5.6F;
     Float WorkloadOfPro = 1.5F;
     Float WorkloadOfEmp = 25.5F;
+
+    boolean BY_EMP = true;
+    boolean BY_USER = false;
 }

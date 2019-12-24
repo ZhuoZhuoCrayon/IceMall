@@ -3,7 +3,10 @@ package com.crayon.controller;
 
 import com.crayon.dto.Result;
 import com.crayon.pojo.PreferentialCondition;
+import com.crayon.pojo.user_manage.User;
 import com.crayon.service.PreferentialConditionService;
+import com.crayon.service.UserService;
+import com.crayon.setting.constant.SystemConstant;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +21,8 @@ import java.util.List;
 public class PreferentialConditionController {
     @Autowired
     private PreferentialConditionService preferentialConditionService;
+    @Autowired
+    private UserService userService;
 
     @RequestMapping(value = "/countPreferentials.do",method = RequestMethod.GET)
     @ApiOperation("获取优惠条件数量")
@@ -51,6 +56,7 @@ public class PreferentialConditionController {
     @ApiOperation("新增优惠条件")
     public Result insertPreferential(
             @RequestBody PreferentialCondition preferentialCondition){
+
         return preferentialConditionService.insert(preferentialCondition);
     }
 
@@ -59,6 +65,7 @@ public class PreferentialConditionController {
     @ApiOperation("更新优惠条件")
     public Result updatePreferential(
             @RequestBody PreferentialCondition preferentialCondition){
+
         return preferentialConditionService.update(preferentialCondition);
     }
 
@@ -67,6 +74,7 @@ public class PreferentialConditionController {
     @ApiOperation("通过Id删除优惠条件")
     public Result deletePreferentialById(
             @RequestParam(value = "preConId", required = false) Integer preConId){
+
         return preferentialConditionService.deleteById(preConId);
     }
 
