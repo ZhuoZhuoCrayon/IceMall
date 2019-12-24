@@ -1,12 +1,15 @@
 package com.crayon.service.impl;
 
 import com.crayon.dao.DescriptionDao;
+import com.crayon.dao.OrderDao;
 import com.crayon.dao.ProEvaluationDao;
+import com.crayon.pojo.Order;
 import com.crayon.pojo.ProEvaluation;
 import com.crayon.dto.Evaluation;
 import com.crayon.dto.Result;
 import com.crayon.dto.UserEvaluation;
 import com.crayon.pojo.Description;
+import com.crayon.pojo.user_manage.User;
 import com.crayon.service.DescriptionService;
 import com.crayon.service.UserService;
 import com.crayon.setting.constant.DescribeConstant;
@@ -32,6 +35,8 @@ public class DescriptionServiceImpl implements DescriptionService {
     ProEvaluationDao proEvaluationDao;
     @Autowired
     UserService userService;
+    @Autowired
+    OrderDao orderDao;
 
     @Override
     public Integer countDOs() {
@@ -173,24 +178,41 @@ public class DescriptionServiceImpl implements DescriptionService {
 
     @Transactional(rollbackFor=Exception.class)
     @Override
-    public Result insertEvaluation(Evaluation evaluation) throws Exception{
-            //插入描述
-            Description description = new Description();
-            description.setDesBody(evaluation.getDesBody());
-            description.setDesHead(evaluation.getDesHead());
-            Result result = this.insertDescriptionBySetting(DescribeConstant.TEXT,DescribeConstant.EVALUATE,description);
-            int desId = (Integer) result.getPlusParams().get("desId");
+    public Result insertEvaluation(Evaluation evaluation) throws Exception {
 
-            ProEvaluation proEvaluation = new ProEvaluation();
-            proEvaluation.setUserId(userService.getCurrentUser().getUserId());
-            proEvaluation.setProId(evaluation.getProId());
-            proEvaluation.setLevel(evaluation.getLevel());
-            proEvaluation.setEvaDate(new Date());
-            proEvaluation.setDesId(desId);
 
-            proEvaluationDao.insert(proEvaluation);
+        User user = userService.getCurrentUser();
+        int buyProductCount = orderDao.countUserOrdersByProId(user.getUserId(),evaluation.getProId());
+        int evaProductCount = proEvaluationDao.countUserEvaByProId(user.getUserId(),evaluation.getProId());
 
-            return new Result(true,"添加评论成功");
+        System.out.println("buyProductCount" + buyProductCount + " evaProductCount:" +evaProductCount);
+
+        if(buyProductCount<=0){
+            return new Result(false,"宁没有购买该商品");
+        }
+
+        if(evaProductCount>=buyProductCount){
+            return new Result(false,"宁已经评价啦");
+        }
+
+
+        //插入描述
+        Description description = new Description();
+        description.setDesBody(evaluation.getDesBody());
+        description.setDesHead(evaluation.getDesHead());
+        Result result = this.insertDescriptionBySetting(DescribeConstant.TEXT, DescribeConstant.EVALUATE, description);
+        int desId = (Integer) result.getPlusParams().get("desId");
+
+        ProEvaluation proEvaluation = new ProEvaluation();
+        proEvaluation.setUserId(user.getUserId());
+        proEvaluation.setProId(evaluation.getProId());
+        proEvaluation.setLevel(evaluation.getLevel());
+        proEvaluation.setEvaDate(new Date());
+        proEvaluation.setDesId(desId);
+
+        proEvaluationDao.insert(proEvaluation);
+
+        return new Result(true, "添加评论成功");
     }
 
     @Transactional(rollbackFor=Exception.class)

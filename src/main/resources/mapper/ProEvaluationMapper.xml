@@ -8,4 +8,9 @@
         insert into proevaluation(userId, proId, level, evaDate, desId) VALUES
         (#{userId}, #{proId}, #{level}, #{evaDate}, #{desId});
     </insert>
+
+    <select id="countUserEvaByProId" resultType="Integer">
+        select count(*) from proevaluation
+        where userId = #{userId} and proId = #{proId};
+    </select>
 </mapper>
