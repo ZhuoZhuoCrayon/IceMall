@@ -8,7 +8,8 @@ CREATE TABLE Users
     salt         varchar(200),
     email        varchar(100),
     phoneNumber  varchar(100),
-    registerDate date,
+    address      text,
+    registerDate datetime,
     birthday     date,
     PRIMARY KEY (userId)
 ) ENGINE = InnoDB
@@ -134,7 +135,7 @@ CREATE TABLE Product
     proName                 varchar(255),
     proPrice                float,
     proQuantity             integer,
-    proCreationTime         date,
+    proCreationTime         datetime,
     productionTime          date,
     preservePeriod          date,
     proPortionalTaxRate     float,
@@ -152,7 +153,7 @@ CREATE TABLE ProEvaluation
     userId   integer,
     proId    integer,
     level    integer,  # 1-5
-    evaDate  date,
+    evaDate  datetime,
     desId    integer,
     PRIMARY KEY (proEvaId),
     FOREIGN KEY (proId) REFERENCES Product (proId),
@@ -202,13 +203,15 @@ CREATE TABLE ShoppingCart
 CREATE TABLE Transportation
 (
     transId           integer auto_increment,
+    resEId            integer,
     transMethod       text,
-    orderId           integer,
     origin            text,
     destination       text,
     postage           float,
-    transCreationTime date,
-    PRIMARY KEY (transId)
+    transCreationTime datetime,
+    transArriveTime   datetime,
+    PRIMARY KEY (transId),
+    foreign key (resEId) REFERENCES Employee (userId)
 ) ENGINE = InnoDB
   CHARSET = utf8;
 
@@ -217,7 +220,8 @@ CREATE TABLE Orders
     orderId         integer auto_increment,
     ordStatus       integer,    # e:1送达 2：取消...
     userId          integer,
-    ordCreationTime date,
+    ordCreationTime datetime,
+    ordPayTime      datetime,
     transId         integer,
     ordTotPrice     float,
     resEId          integer,
@@ -244,20 +248,20 @@ create table OrderProductList
 
 #----------------------insert sys----------------------------------------------------------
 
-insert into users values(1,'admin','3bb0b0e9f079312bb881bce0d0346e52','315a6b25cc2d8a5af98f5768e2945e7a',null,null,null,null);
-insert into users values(2,'user','fa2a26aa8be21a5ec4fae415be6ac657','8fb10b18001d1e492130bbdc2285a032',null,null,null,null);
-insert into users values(3,'cxx','f0bdca517db36b55feafcf3d129b9799','0d926376758d195b1c048d5a0b785c68',null,null,null,null);
-insert into users values(4,'cph','5b62be119205476e49c9d53f06d7c37b','43b6440bf86dea40174632b6872a4a98',null,null,null,null);
-insert into users values(5,'cwq','15e00bd805df4e5db38416c4d476401d','554ce5874a155121c2eb363d24247659',null,null,null,null);
-insert into users values(6,'user1','500e287d63055f58e2d285dbefa48b9e','d888df2e2aec3afdd9552cb51d42b8a0',null,null,null,null);
-insert into users values(7,'user2','d328a848e7fe79b5ed64b6603293902e','aa27c9bdf76d2422ea7dcded65725fde',null,null,null,null);
-insert into users values(8,'user3','2d97066b5a5bcda4eba9f5f1e37765c4','3f695411a5bd555009096627476001d5',null,null,null,null);
-insert into users values(9,'user4','5cebac81a8380e2ecbf07e9f7893e3df','59f7214e75042dbd4bf60557a7c0a2b5',null,null,null,null);
+insert into users values(1,'admin','3bb0b0e9f079312bb881bce0d0346e52','315a6b25cc2d8a5af98f5768e2945e7a',null,null,null,null,null);
+insert into users values(2,'user','fa2a26aa8be21a5ec4fae415be6ac657','8fb10b18001d1e492130bbdc2285a032',null,null,null,null,null);
+insert into users values(3,'cxx','f0bdca517db36b55feafcf3d129b9799','0d926376758d195b1c048d5a0b785c68',null,null,null,null,null);
+insert into users values(4,'cph','5b62be119205476e49c9d53f06d7c37b','43b6440bf86dea40174632b6872a4a98',null,null,null,null,null);
+insert into users values(5,'cwq','15e00bd805df4e5db38416c4d476401d','554ce5874a155121c2eb363d24247659',null,null,null,null,null);
+insert into users values(6,'user1','500e287d63055f58e2d285dbefa48b9e','d888df2e2aec3afdd9552cb51d42b8a0',null,null,null,null,null);
+insert into users values(7,'user2','d328a848e7fe79b5ed64b6603293902e','aa27c9bdf76d2422ea7dcded65725fde',null,null,null,null,null);
+insert into users values(8,'user3','2d97066b5a5bcda4eba9f5f1e37765c4','3f695411a5bd555009096627476001d5',null,null,null,null,null);
+insert into users values(9,'user4','5cebac81a8380e2ecbf07e9f7893e3df','59f7214e75042dbd4bf60557a7c0a2b5',null,null,null,null,null);
 
-insert into employee values(1,0,'admin');
-insert into employee values(3,9999.99,'admin');
-insert into employee values(4,23.33,'admin');
-insert into employee values(5,888,'admin');
+insert into employee values(1,0,'productAdmin');
+insert into employee values(3,9999.99,'superAdmin');
+insert into employee values(4,23.33,'superAdmin');
+insert into employee values(5,888,'superAdmin');
 
 insert into CusLevel(levelName, levelDiscount) VALUES
 ('Non',1),
@@ -349,124 +353,124 @@ VALUES
 
 
 #预览图
-('IMG','PREVIEW',null,'/static/img/preview/p1.jpg'),
-('IMG','PREVIEW',null,'/static/img/preview/p2.jpg'),
-('IMG','PREVIEW',null,'/static/img/preview/p3.jpg'),
-('IMG','PREVIEW',null,'/static/img/preview/p4.jpg'),
-('IMG','PREVIEW',null,'/static/img/preview/p5.jpg'),
-('IMG','PREVIEW',null,'/static/img/preview/p6.jpg'),
-('IMG','PREVIEW',null,'/static/img/preview/p7.jpg'),
-('IMG','PREVIEW',null,'/static/img/preview/p8.jpg'),
-('IMG','PREVIEW',null,'/static/img/preview/p9.jpg'),
-('IMG','PREVIEW',null,'/static/img/preview/p10.jpg'),
-('IMG','PREVIEW',null,'/static/img/preview/p11.jpg'),
-('IMG','PREVIEW',null,'/static/img/preview/p12.jpg'),
-('IMG','PREVIEW',null,'/static/img/preview/p13.jpg'),
-('IMG','PREVIEW',null,'/static/img/preview/p14.jpg'),
-('IMG','PREVIEW',null,'/static/img/preview/p15.jpg'),
-('IMG','PREVIEW',null,'/static/img/preview/p16.jpg'),
-('IMG','PREVIEW',null,'/static/img/preview/p17.jpg'),
-('IMG','PREVIEW',null,'/static/img/preview/p18.jpg'),
-('IMG','PREVIEW',null,'/static/img/preview/p19.jpg'),
-('IMG','PREVIEW',null,'/static/img/preview/p20.jpg'),
-('IMG','PREVIEW',null,'/static/img/preview/p21.jpg'),
-('IMG','PREVIEW',null,'/static/img/preview/p22.jpg'),
-('IMG','PREVIEW',null,'/static/img/preview/p23.jpg'),
-('IMG','PREVIEW',null,'/static/img/preview/p24.jpg'),
-('IMG','PREVIEW',null,'/static/img/preview/p25.jpg'),
-('IMG','PREVIEW',null,'/static/img/preview/p26.jpg'),
-('IMG','PREVIEW',null,'/static/img/preview/p27.jpg'),
-('IMG','PREVIEW',null,'/static/img/preview/p28.jpg'),
-('IMG','PREVIEW',null,'/static/img/preview/p29.jpg'),
-('IMG','PREVIEW',null,'/static/img/preview/p30.jpg'),
-('IMG','PREVIEW',null,'/static/img/preview/p31.jpg'),
-('IMG','PREVIEW',null,'/static/img/preview/p32.jpg'),
-('IMG','PREVIEW',null,'/static/img/preview/p33.jpg'),
-('IMG','PREVIEW',null,'/static/img/preview/p34.jpg'),
-('IMG','PREVIEW',null,'/static/img/preview/p35.jpg'),
-('IMG','PREVIEW',null,'/static/img/preview/p36.jpg'),
-('IMG','PREVIEW',null,'/static/img/preview/p37.jpg'),
-('IMG','PREVIEW',null,'/static/img/preview/p38.jpg'),
-('IMG','PREVIEW',null,'/static/img/preview/p39.jpg'),
-('IMG','PREVIEW',null,'/static/img/preview/p40.jpg'),
-('IMG','PREVIEW',null,'/static/img/preview/p41.jpg'),
-('IMG','PREVIEW',null,'/static/img/preview/p42.jpg'),
-('IMG','PREVIEW',null,'/static/img/preview/p43.jpg'),
-('IMG','PREVIEW',null,'/static/img/preview/p44.jpg'),
-('IMG','PREVIEW',null,'/static/img/preview/p45.jpg'),
-('IMG','PREVIEW',null,'/static/img/preview/p46.jpg'),
-('IMG','PREVIEW',null,'/static/img/preview/p47.jpg'),
-('IMG','PREVIEW',null,'/static/img/preview/p48.jpg'),
-('IMG','PREVIEW',null,'/static/img/preview/p49.jpg'),
-('IMG','PREVIEW',null,'/static/img/preview/p50.jpg'),
+('IMG','PREVIEW',null,'/img/preview/p1.jpg'),
+('IMG','PREVIEW',null,'/img/preview/p2.jpg'),
+('IMG','PREVIEW',null,'/img/preview/p3.jpg'),
+('IMG','PREVIEW',null,'/img/preview/p4.jpg'),
+('IMG','PREVIEW',null,'/img/preview/p5.jpg'),
+('IMG','PREVIEW',null,'/img/preview/p6.jpg'),
+('IMG','PREVIEW',null,'/img/preview/p7.jpg'),
+('IMG','PREVIEW',null,'/img/preview/p8.jpg'),
+('IMG','PREVIEW',null,'/img/preview/p9.jpg'),
+('IMG','PREVIEW',null,'/img/preview/p10.jpg'),
+('IMG','PREVIEW',null,'/img/preview/p11.jpg'),
+('IMG','PREVIEW',null,'/img/preview/p12.jpg'),
+('IMG','PREVIEW',null,'/img/preview/p13.jpg'),
+('IMG','PREVIEW',null,'/img/preview/p14.jpg'),
+('IMG','PREVIEW',null,'/img/preview/p15.jpg'),
+('IMG','PREVIEW',null,'/img/preview/p16.jpg'),
+('IMG','PREVIEW',null,'/img/preview/p17.jpg'),
+('IMG','PREVIEW',null,'/img/preview/p18.jpg'),
+('IMG','PREVIEW',null,'/img/preview/p19.jpg'),
+('IMG','PREVIEW',null,'/img/preview/p20.jpg'),
+('IMG','PREVIEW',null,'/img/preview/p21.jpg'),
+('IMG','PREVIEW',null,'/img/preview/p22.jpg'),
+('IMG','PREVIEW',null,'/img/preview/p23.jpg'),
+('IMG','PREVIEW',null,'/img/preview/p24.jpg'),
+('IMG','PREVIEW',null,'/img/preview/p25.jpg'),
+('IMG','PREVIEW',null,'/img/preview/p26.jpg'),
+('IMG','PREVIEW',null,'/img/preview/p27.jpg'),
+('IMG','PREVIEW',null,'/img/preview/p28.jpg'),
+('IMG','PREVIEW',null,'/img/preview/p29.jpg'),
+('IMG','PREVIEW',null,'/img/preview/p30.jpg'),
+('IMG','PREVIEW',null,'/img/preview/p31.jpg'),
+('IMG','PREVIEW',null,'/img/preview/p32.jpg'),
+('IMG','PREVIEW',null,'/img/preview/p33.jpg'),
+('IMG','PREVIEW',null,'/img/preview/p34.jpg'),
+('IMG','PREVIEW',null,'/img/preview/p35.jpg'),
+('IMG','PREVIEW',null,'/img/preview/p36.jpg'),
+('IMG','PREVIEW',null,'/img/preview/p37.jpg'),
+('IMG','PREVIEW',null,'/img/preview/p38.jpg'),
+('IMG','PREVIEW',null,'/img/preview/p39.jpg'),
+('IMG','PREVIEW',null,'/img/preview/p40.jpg'),
+('IMG','PREVIEW',null,'/img/preview/p41.jpg'),
+('IMG','PREVIEW',null,'/img/preview/p42.jpg'),
+('IMG','PREVIEW',null,'/img/preview/p43.jpg'),
+('IMG','PREVIEW',null,'/img/preview/p44.jpg'),
+('IMG','PREVIEW',null,'/img/preview/p45.jpg'),
+('IMG','PREVIEW',null,'/img/preview/p46.jpg'),
+('IMG','PREVIEW',null,'/img/preview/p47.jpg'),
+('IMG','PREVIEW',null,'/img/preview/p48.jpg'),
+('IMG','PREVIEW',null,'/img/preview/p49.jpg'),
+('IMG','PREVIEW',null,'/img/preview/p50.jpg'),
 
-('IMG','DETAIL_DESCRIBE',null,'/static/img/detail/1.png'),
-('IMG','DETAIL_DESCRIBE',null,'/static/img/detail/2.png'),
-('IMG','DETAIL_DESCRIBE',null,'/static/img/detail/3.png'),
-('IMG','DETAIL_DESCRIBE',null,'/static/img/detail/4.png'),
-('IMG','DETAIL_DESCRIBE',null,'/static/img/detail/5.png'),
-('IMG','DETAIL_DESCRIBE',null,'/static/img/detail/6.png'),
-('IMG','DETAIL_DESCRIBE',null,'/static/img/detail/7.png'),
-('IMG','DETAIL_DESCRIBE',null,'/static/img/detail/8.png'),
-('IMG','DETAIL_DESCRIBE',null,'/static/img/detail/9.png'),
-('IMG','DETAIL_DESCRIBE',null,'/static/img/detail/10.jpg'),
-('IMG','DETAIL_DESCRIBE',null,'/static/img/detail/11.jpg'),
-('IMG','DETAIL_DESCRIBE',null,'/static/img/detail/12.jpg'),
-('IMG','DETAIL_DESCRIBE',null,'/static/img/detail/13.jpg'),
-('IMG','DETAIL_DESCRIBE',null,'/static/img/detail/14.jpg'),
-('IMG','DETAIL_DESCRIBE',null,'/static/img/detail/15.png'),
-('IMG','DETAIL_DESCRIBE',null,'/static/img/detail/16.png'),
-('IMG','DETAIL_DESCRIBE',null,'/static/img/detail/17.png'),
-('IMG','DETAIL_DESCRIBE',null,'/static/img/detail/18.png'),
-('IMG','DETAIL_DESCRIBE',null,'/static/img/detail/19.png'),
-('IMG','DETAIL_DESCRIBE',null,'/static/img/detail/20.png'),
-('IMG','DETAIL_DESCRIBE',null,'/static/img/detail/21.jpg'),
-('IMG','DETAIL_DESCRIBE',null,'/static/img/detail/22.jpg'),
-('IMG','DETAIL_DESCRIBE',null,'/static/img/detail/23.jpg'),
-('IMG','DETAIL_DESCRIBE',null,'/static/img/detail/24.jpg'),
-('IMG','DETAIL_DESCRIBE',null,'/static/img/detail/25.png'),
-('IMG','DETAIL_DESCRIBE',null,'/static/img/detail/26.png'),
-('IMG','DETAIL_DESCRIBE',null,'/static/img/detail/27.png'),
-('IMG','DETAIL_DESCRIBE',null,'/static/img/detail/28.png'),
-('IMG','DETAIL_DESCRIBE',null,'/static/img/detail/29.png'),
-('IMG','DETAIL_DESCRIBE',null,'/static/img/detail/30.png'),
-('IMG','DETAIL_DESCRIBE',null,'/static/img/detail/31.png'),
-('IMG','DETAIL_DESCRIBE',null,'/static/img/detail/32.png'),
-('IMG','DETAIL_DESCRIBE',null,'/static/img/detail/33.png'),
-('IMG','DETAIL_DESCRIBE',null,'/static/img/detail/34.png'),
-('IMG','DETAIL_DESCRIBE',null,'/static/img/detail/35.png'),
-('IMG','DETAIL_DESCRIBE',null,'/static/img/detail/36.png'),
-('IMG','DETAIL_DESCRIBE',null,'/static/img/detail/37.png'),
-('IMG','DETAIL_DESCRIBE',null,'/static/img/detail/38.png'),
-('IMG','DETAIL_DESCRIBE',null,'/static/img/detail/39.png'),
-('IMG','DETAIL_DESCRIBE',null,'/static/img/detail/40.png'),
-('IMG','DETAIL_DESCRIBE',null,'/static/img/detail/41.png'),
-('IMG','DETAIL_DESCRIBE',null,'/static/img/detail/42.png'),
-('IMG','DETAIL_DESCRIBE',null,'/static/img/detail/43.png'),
-('IMG','DETAIL_DESCRIBE',null,'/static/img/detail/44.png'),
-('IMG','DETAIL_DESCRIBE',null,'/static/img/detail/45.png'),
-('IMG','DETAIL_DESCRIBE',null,'/static/img/detail/46.png'),
-('IMG','DETAIL_DESCRIBE',null,'/static/img/detail/47.png'),
-('IMG','DETAIL_DESCRIBE',null,'/static/img/detail/48.png'),
-('IMG','DETAIL_DESCRIBE',null,'/static/img/detail/49.png'),
-('IMG','DETAIL_DESCRIBE',null,'/static/img/detail/50.png'),
-('IMG','DETAIL_DESCRIBE',null,'/static/img/detail/51.png'),
-('IMG','DETAIL_DESCRIBE',null,'/static/img/detail/52.png'),
-('IMG','DETAIL_DESCRIBE',null,'/static/img/detail/53.jpg'),
-('IMG','DETAIL_DESCRIBE',null,'/static/img/detail/54.png'),
-('IMG','DETAIL_DESCRIBE',null,'/static/img/detail/55.png'),
-('IMG','DETAIL_DESCRIBE',null,'/static/img/detail/56.png'),
-('IMG','DETAIL_DESCRIBE',null,'/static/img/detail/57.png'),
-('IMG','DETAIL_DESCRIBE',null,'/static/img/detail/58.png'),
-('IMG','DETAIL_DESCRIBE',null,'/static/img/detail/59.png'),
-('IMG','DETAIL_DESCRIBE',null,'/static/img/detail/60.png'),
-('IMG','DETAIL_DESCRIBE',null,'/static/img/detail/61.png'),
-('IMG','DETAIL_DESCRIBE',null,'/static/img/detail/62.png'),
-('IMG','DETAIL_DESCRIBE',null,'/static/img/detail/63.png'),
-('IMG','DETAIL_DESCRIBE',null,'/static/img/detail/64.jpg'),
-('IMG','DETAIL_DESCRIBE',null,'/static/img/detail/65.png'),
-('IMG','DETAIL_DESCRIBE',null,'/static/img/detail/66.png'),
-('IMG','DETAIL_DESCRIBE',null,'/static/img/detail/67.jpg'),
+('IMG','DETAIL_DESCRIBE',null,'/img/detail/1.png'),
+('IMG','DETAIL_DESCRIBE',null,'/img/detail/2.png'),
+('IMG','DETAIL_DESCRIBE',null,'/img/detail/3.png'),
+('IMG','DETAIL_DESCRIBE',null,'/img/detail/4.png'),
+('IMG','DETAIL_DESCRIBE',null,'/img/detail/5.png'),
+('IMG','DETAIL_DESCRIBE',null,'/img/detail/6.png'),
+('IMG','DETAIL_DESCRIBE',null,'/img/detail/7.png'),
+('IMG','DETAIL_DESCRIBE',null,'/img/detail/8.png'),
+('IMG','DETAIL_DESCRIBE',null,'/img/detail/9.png'),
+('IMG','DETAIL_DESCRIBE',null,'/img/detail/10.jpg'),
+('IMG','DETAIL_DESCRIBE',null,'/img/detail/11.jpg'),
+('IMG','DETAIL_DESCRIBE',null,'/img/detail/12.jpg'),
+('IMG','DETAIL_DESCRIBE',null,'/img/detail/13.jpg'),
+('IMG','DETAIL_DESCRIBE',null,'/img/detail/14.jpg'),
+('IMG','DETAIL_DESCRIBE',null,'/img/detail/15.png'),
+('IMG','DETAIL_DESCRIBE',null,'/img/detail/16.png'),
+('IMG','DETAIL_DESCRIBE',null,'/img/detail/17.png'),
+('IMG','DETAIL_DESCRIBE',null,'/img/detail/18.png'),
+('IMG','DETAIL_DESCRIBE',null,'/img/detail/19.png'),
+('IMG','DETAIL_DESCRIBE',null,'/img/detail/20.png'),
+('IMG','DETAIL_DESCRIBE',null,'/img/detail/21.jpg'),
+('IMG','DETAIL_DESCRIBE',null,'/img/detail/22.jpg'),
+('IMG','DETAIL_DESCRIBE',null,'/img/detail/23.jpg'),
+('IMG','DETAIL_DESCRIBE',null,'/img/detail/24.jpg'),
+('IMG','DETAIL_DESCRIBE',null,'/img/detail/25.png'),
+('IMG','DETAIL_DESCRIBE',null,'/img/detail/26.png'),
+('IMG','DETAIL_DESCRIBE',null,'/img/detail/27.png'),
+('IMG','DETAIL_DESCRIBE',null,'/img/detail/28.png'),
+('IMG','DETAIL_DESCRIBE',null,'/img/detail/29.png'),
+('IMG','DETAIL_DESCRIBE',null,'/img/detail/30.png'),
+('IMG','DETAIL_DESCRIBE',null,'/img/detail/31.png'),
+('IMG','DETAIL_DESCRIBE',null,'/img/detail/32.png'),
+('IMG','DETAIL_DESCRIBE',null,'/img/detail/33.png'),
+('IMG','DETAIL_DESCRIBE',null,'/img/detail/34.png'),
+('IMG','DETAIL_DESCRIBE',null,'/img/detail/35.png'),
+('IMG','DETAIL_DESCRIBE',null,'/img/detail/36.png'),
+('IMG','DETAIL_DESCRIBE',null,'/img/detail/37.png'),
+('IMG','DETAIL_DESCRIBE',null,'/img/detail/38.png'),
+('IMG','DETAIL_DESCRIBE',null,'/img/detail/39.png'),
+('IMG','DETAIL_DESCRIBE',null,'/img/detail/40.png'),
+('IMG','DETAIL_DESCRIBE',null,'/img/detail/41.png'),
+('IMG','DETAIL_DESCRIBE',null,'/img/detail/42.png'),
+('IMG','DETAIL_DESCRIBE',null,'/img/detail/43.png'),
+('IMG','DETAIL_DESCRIBE',null,'/img/detail/44.png'),
+('IMG','DETAIL_DESCRIBE',null,'/img/detail/45.png'),
+('IMG','DETAIL_DESCRIBE',null,'/img/detail/46.png'),
+('IMG','DETAIL_DESCRIBE',null,'/img/detail/47.png'),
+('IMG','DETAIL_DESCRIBE',null,'/img/detail/48.png'),
+('IMG','DETAIL_DESCRIBE',null,'/img/detail/49.png'),
+('IMG','DETAIL_DESCRIBE',null,'/img/detail/50.png'),
+('IMG','DETAIL_DESCRIBE',null,'/img/detail/51.png'),
+('IMG','DETAIL_DESCRIBE',null,'/img/detail/52.png'),
+('IMG','DETAIL_DESCRIBE',null,'/img/detail/53.jpg'),
+('IMG','DETAIL_DESCRIBE',null,'/img/detail/54.png'),
+('IMG','DETAIL_DESCRIBE',null,'/img/detail/55.png'),
+('IMG','DETAIL_DESCRIBE',null,'/img/detail/56.png'),
+('IMG','DETAIL_DESCRIBE',null,'/img/detail/57.png'),
+('IMG','DETAIL_DESCRIBE',null,'/img/detail/58.png'),
+('IMG','DETAIL_DESCRIBE',null,'/img/detail/59.png'),
+('IMG','DETAIL_DESCRIBE',null,'/img/detail/60.png'),
+('IMG','DETAIL_DESCRIBE',null,'/img/detail/61.png'),
+('IMG','DETAIL_DESCRIBE',null,'/img/detail/62.png'),
+('IMG','DETAIL_DESCRIBE',null,'/img/detail/63.png'),
+('IMG','DETAIL_DESCRIBE',null,'/img/detail/64.jpg'),
+('IMG','DETAIL_DESCRIBE',null,'/img/detail/65.png'),
+('IMG','DETAIL_DESCRIBE',null,'/img/detail/66.png'),
+('IMG','DETAIL_DESCRIBE',null,'/img/detail/67.jpg'),
 
 # 描述
 ('TEXT','DESCRIBE','特性','精品葡萄酒'),
@@ -815,16 +819,6 @@ INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (27,70);
 INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (28,71);
 INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (29,72);
 INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (30,73);
-INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (31,84);
-INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (32,85);
-INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (33,86);
-INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (34,87);
-INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (35,88);
-INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (36,89);
-INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (37,90);
-INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (38,91);
-INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (39,92);
-INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (40,93);
 
 # 插入描述图片
 INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (1,94);
@@ -917,6 +911,40 @@ INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (29,157);
 INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (30,158);
 INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (30,159);
 INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (30,160);
+
+# 插入预览描述
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (1,196);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (2,197);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (3,198);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (4,199);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (5,200);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (6,201);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (7,202);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (8,203);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (9,204);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (10,205);
+
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (11,206);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (12,207);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (13,208);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (14,209);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (15,210);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (16,211);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (17,212);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (18,213);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (19,214);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (20,215);
+
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (21,216);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (22,217);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (23,218);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (24,219);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (25,220);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (26,221);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (27,222);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (28,223);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (29,224);
+INSERT INTO `prodescribe`(`proId`, `desId`) VALUES (30,225);
 
 
 # 1满减 2优惠折扣 3 满额折扣
