@@ -18,8 +18,8 @@ public class TestSys {
 
     @Test
     public void testRegister(){
-        UserRegisterBean uRb = new UserRegisterBean("test5","123",
+        /*UserRegisterBean uRb = new UserRegisterBean("test5","123",
                                     "123@qq.com","123",new Date());
-        userService.registerForCustomer(uRb);
+        userService.registerForCustomer(uRb);*/
     }
 }

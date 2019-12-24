@@ -35,6 +35,8 @@ public class MyShiroFilterFactoryBean  extends ShiroFilterFactoryBean {
                 "/js/** = anon\n" +
                 "/img/** = anon\n" +
                 "/index.jsp = anon\n" +
+                "/logout = logout\n" +
+                "/logout.do = logout\n" +
                 "/404.html = anon\n" +
                 "/test.html = anon\n" +
                 "/API/SystemAPI.html = anon\n" +

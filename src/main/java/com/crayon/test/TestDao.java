@@ -1,13 +1,17 @@
 package com.crayon.test;
 
+import com.crayon.dao.DescriptionDao;
 import com.crayon.dao.ProductDao;
 import com.crayon.dao.user_manage.PermissionDao;
 import com.crayon.dao.user_manage.RoleDao;
 import com.crayon.dao.user_manage.UserDao;
+import com.crayon.pojo.Description;
 import com.crayon.pojo.Product;
 import com.crayon.pojo.user_manage.Permission;
 import com.crayon.pojo.user_manage.Role;
 import com.crayon.pojo.user_manage.User;
+import com.crayon.setting.constant.DescribeConstant;
+import com.crayon.setting.constant.ProductConstant;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
@@ -38,9 +42,12 @@ public class TestDao {
     public void testProduct() throws Exception{
         ProductDao productDao = (ProductDao) applicationContext.
                 getBean("productDao");
-        Product product = productDao.getProductByKey(1);
-        product.setProStatus("0");
-        productDao.update(product);
+        Product product = productDao.getProductByKey(31);
+        if(product==null){
+            System.out.println("product is null");
+        }
+        //product.setProStatus("0");
+        //productDao.update(product);
     }
 
     @Test
@@ -60,7 +67,7 @@ public class TestDao {
 
     @Test
     public void createUser() throws Exception{
-        UserDao userDao = (UserDao) applicationContext.getBean("userDao");
+       /* UserDao userDao = (UserDao) applicationContext.getBean("userDao");
         userDao.insert(new User(null,"cxx","123",
                 null,null,null,new Date(),null));
         userDao.insert(new User(null,"cph","123",
@@ -74,6 +81,17 @@ public class TestDao {
         userDao.insert(new User(null,"user3","123",
                 null,null,null,new Date(),null));
         userDao.insert(new User(null,"user4","123",
-                null,null,null,new Date(),null));
+                null,null,null,new Date(),null));*/
+    }
+
+    @Test
+    public void testListDescriptionsById() throws Exception{
+        DescriptionDao descriptionDao = (DescriptionDao) applicationContext.getBean("descriptionDao");
+        List<Description> descriptions = descriptionDao.listProductDescriptionsByFilter(
+                1, DescribeConstant.IMG,DescribeConstant.PREVIEW);
+        //List<Description> descriptions = descriptionDao.listAllDescriptions();
+        for(Description description:descriptions){
+            System.out.println(description.getDesBody());
+        }
     }
 }
